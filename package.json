@@ -15,7 +15,10 @@
     "react-scripts": "3.4.0",
     "typescript": "~3.7.2"
   },
+  "main": "dist-electron/index.js",
   "scripts": {
+    "electron-build": "tsc --outDir dist-electron electron/index.ts",
+    "electron-start": "electron .",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
@@ -34,6 +37,7 @@
     ]
   },
   "devDependencies": {
+    "electron": "^8.0.1",
     "eslint-config-standard": "^14.1.0",
     "eslint-config-standard-react": "^9.2.0",
     "eslint-plugin-import": "^2.20.1",
