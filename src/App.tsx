@@ -19,6 +19,8 @@ import ListItemIcon from '@material-ui/core/ListItemIcon'
 import ListItemText from '@material-ui/core/ListItemText'
 import FavoriteIcon from '@material-ui/icons/Favorite'
 
+import ImageList from './Image-list'
+
 const drawerWidth = 240
 const menusList = [
   {
@@ -158,9 +160,7 @@ export default function App () {
           })}
         >
           <div className={classes.drawerHeader} />
-          <Typography paragraph>
-            Main view
-          </Typography>
+          <ImageList />
         </main>
       </ThemeProvider>
     </div>
