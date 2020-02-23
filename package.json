@@ -20,7 +20,9 @@
   "main": "dist-electron/index.js",
   "scripts": {
     "electron-build": "tsc --outDir dist-electron electron/index.ts",
+    "electron-ts-watch": "tsc --watch --outDir dist-electron electron/index.ts",
     "electron-start": "electron .",
+    "electron-dev-watch": "nodemon --exec 'electron .'",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
@@ -46,6 +48,7 @@
     "eslint-plugin-node": "^11.0.0",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-react": "^7.18.3",
-    "eslint-plugin-standard": "^4.0.1"
+    "eslint-plugin-standard": "^4.0.1",
+    "nodemon": "^2.0.2"
   }
 }
