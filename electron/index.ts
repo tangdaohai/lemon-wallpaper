@@ -1,4 +1,5 @@
-import { app, BrowserWindow } from 'electron'
+import { app, BrowserWindow, ipcMain } from 'electron'
+import ipcType from './service/ipc-type-service'
 
 function createWindow () {
   // 创建浏览器窗口
@@ -9,6 +10,9 @@ function createWindow () {
       nodeIntegration: true
     }
   })
+
+  // 处理页面发送的 ipc 事件
+  ipcMain.on('server', ipcType)
 
   // and load the index.html of the app.
   win.loadURL('http://localhost:3000')
