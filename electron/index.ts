@@ -1,5 +1,7 @@
 import { app, BrowserWindow, ipcMain } from 'electron'
 import ipcType from './service/ipc-type-service'
+import { join } from 'path'
+import { homedir } from 'os'
 
 function createWindow () {
   // 创建浏览器窗口
@@ -10,6 +12,12 @@ function createWindow () {
       nodeIntegration: true
     }
   })
+
+  // @TODO 区分开发环境
+  // 添加 react chrome 开发者插件
+  BrowserWindow.addDevToolsExtension(
+    join(homedir(), '/Library/Application Support/Google/Chrome/Profile 5/Extensions/fmkadmapgofadopljbjfkapdkoienihi/4.4.0_0')
+  )
 
   // 处理页面发送的 ipc 事件
   ipcMain.on('server', ipcType)
