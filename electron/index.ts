@@ -2,16 +2,20 @@ import { app, BrowserWindow, ipcMain } from 'electron'
 import ipcType from './service/ipc-type-service'
 import { join } from 'path'
 import { homedir } from 'os'
+import loadConfig from './service/load-config'
 
-function createWindow () {
+async function createWindow () {
   // 创建浏览器窗口
   const win = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: 1920,
+    height: 1080,
     webPreferences: {
       nodeIntegration: true
     }
   })
+
+  // 加载配置文件
+  await loadConfig()
 
   // @TODO 区分开发环境
   // 添加 react chrome 开发者插件
