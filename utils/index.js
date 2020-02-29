@@ -1,5 +1,6 @@
 const EventType = {
-  PROXY: 'PROXY',
+  PROXY: 'proxy',
+  DOWNLOAD: 'download',
   SET_DESKTOP: 'set-desktop'
 }
 module.exports = {
