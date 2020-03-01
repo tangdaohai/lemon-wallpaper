@@ -2,7 +2,6 @@ import React from 'react'
 import clsx from 'clsx'
 import { ThemeProvider, makeStyles, Theme, createStyles, useTheme, fade } from '@material-ui/core/styles'
 import createCustomTheme from './theme'
-import useMediaQuery from '@material-ui/core/useMediaQuery'
 import Drawer from '@material-ui/core/Drawer'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import AppBar from '@material-ui/core/AppBar'
@@ -143,9 +142,9 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export default function App () {
   // 获取系统主题模式（moc下的深色与浅色，默认为 dark）
-  const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)')
+  // const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)')
   // 自定义主题
-  const customTheme = createCustomTheme(prefersDarkMode)
+  const customTheme = createCustomTheme(true)
   const classes = useStyles()
   const theme = useTheme()
   const [open, setOpen] = React.useState(false)
