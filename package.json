@@ -21,8 +21,8 @@
   },
   "main": "dist-electron/index.js",
   "scripts": {
-    "electron-build": "tsc --outDir dist-electron electron/index.ts",
-    "electron-ts-watch": "tsc --watch --outDir dist-electron electron/index.ts",
+    "electron-build": "tsc --resolveJsonModule --outDir dist-electron electron/index.ts",
+    "electron-ts-watch": "tsc --resolveJsonModule --watch --outDir dist-electron electron/index.ts",
     "electron-start": "electron .",
     "electron-dev-watch": "nodemon --watch ./dist-electron/*.js --exec 'electron .'",
     "start": "react-scripts start",
