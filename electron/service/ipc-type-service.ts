@@ -1,7 +1,7 @@
 // ipc 通信处理
 import { IpcMainEvent } from 'electron'
 import { IncomingMessage } from 'http'
-import { createWriteStream } from 'fs'
+import { createWriteStream, promises as fsPromises } from 'fs'
 import { join } from 'path'
 import { EventType } from 'lemon-utils'
 import { get as getConfig } from '../config'
@@ -60,9 +60,18 @@ async function proxy (data: any): Promise<object> {
 }
 
 // 下载图片
-function download (data: any): Promise<object> {
+async function download (data: any): Promise<object> {
   const { url, type } = data
-  const downLoadUrl = getConfig().downLoadPath
+  const saveImgPath = getConfig().downLoadPath
+  console.log('图片保存地址：', saveImgPath)
+  try {
+    // 不存在就创建
+    await fsPromises.mkdir(saveImgPath)
+    console.log('文件夹创建成功。')
+  } catch (err) {
+    console.log('地址已存在。')
+  }
+  console.log('图片下载 url: ', url)
   // 默认图片名称
   let imgName: string = 'default-' + Date.now() + '.jpg'
   switch (type) {
@@ -70,16 +79,22 @@ function download (data: any): Promise<object> {
       imgName = url.match(/id=.*\.jpg/)[0]
   }
   return new Promise(resolve => {
-    createWriteStream(join(downLoadUrl, imgName)).pipe(request(url, (err: any, response: IncomingMessage, body: any) => {
+    request(url, (err: any, response: IncomingMessage, body: any) => {
       if (err) {
         resolve({
-          success: false
+          success: false,
+          content: {
+            url
+          }
         })
         return
       }
       resolve({
-        success: true
+        success: true,
+        content: {
+          url
+        }
       })
-    }))
+    }).pipe(createWriteStream(join(saveImgPath, imgName)))
   })
 }

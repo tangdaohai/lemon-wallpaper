@@ -42,9 +42,25 @@ export default function ImageList () {
     ipcRenderer.send('server', searchData)
   }, [searchData])
 
+  // 下载图片
+  const downLoadImg = (url: string) => {
+    ipcRenderer.send('server', {
+      type: EventType.DOWNLOAD,
+      data: {
+        url,
+        type: 'biying'
+      }
+    })
+  }
+
   ipcRenderer.on('client', (event: any, msg: any) => {
-    setList(msg?.data?.images)
-    console.log(msg, msg?.data?.images, list)
+    switch (msg.type) {
+      case EventType.PROXY:
+        setList(msg?.data?.images || [])
+        break
+      case EventType.DOWNLOAD:
+        break
+    }
   })
 
   const classes = useStyles()
@@ -56,7 +72,7 @@ export default function ImageList () {
           <CardMedia className={classes.cardMedia} image={`https://cn.bing.com${val.url}`} title='Lemon wallpaper' />
         </CardActionArea>
         <CardActions className={classes.cardActions}>
-          <IconButton aria-label='add to favorites'>
+          <IconButton aria-label='下载图片' onClick={() => downLoadImg(`https://cn.bing.com${val.url}`)}>
             <ArrowDownward />
           </IconButton>
           <Button variant='contained' color='primary'>设置桌面</Button>
