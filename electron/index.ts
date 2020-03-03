@@ -19,9 +19,14 @@ async function createWindow () {
 
   // @TODO 区分开发环境
   // 添加 react chrome 开发者插件
-  BrowserWindow.addDevToolsExtension(
-    join(homedir(), '/Library/Application Support/Google/Chrome/Profile 5/Extensions/fmkadmapgofadopljbjfkapdkoienihi/4.4.0_0')
-  )
+  try {
+    BrowserWindow.addDevToolsExtension(
+      join(homedir(), '/Library/Application Support/Google/Chrome/Profile 1/Extensions/fmkadmapgofadopljbjfkapdkoienihi/4.4.0_0')
+    )
+  } catch (err) {
+    console.log('React dev tools 加载失败')
+    console.log(err)
+  }
 
   // 处理页面发送的 ipc 事件
   ipcMain.on('server', ipcType)
