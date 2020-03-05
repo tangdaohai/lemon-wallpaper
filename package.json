@@ -5,6 +5,7 @@
   "dependencies": {
     "@material-ui/core": "^4.9.2",
     "@material-ui/icons": "^4.9.1",
+    "@material-ui/lab": "^4.0.0-alpha.45",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
@@ -54,5 +55,7 @@
     "eslint-plugin-standard": "^4.0.1",
     "nodemon": "^2.0.2"
   },
-  "workspaces": ["./utils"]
+  "workspaces": [
+    "./utils"
+  ]
 }
