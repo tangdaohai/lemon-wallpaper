@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
-import { Grid, Card, CardMedia, CardActionArea, CardActions, IconButton, Button } from '@material-ui/core'
+import { Grid, Card, CardMedia, CardActionArea, CardActions, IconButton, Button, Snackbar } from '@material-ui/core'
+import MuiAlert, { AlertProps } from '@material-ui/lab/Alert'
 import { EventType } from 'lemon-utils'
 import { ArrowDownward } from '@material-ui/icons'
 const { ipcRenderer } = window.require('electron')
@@ -25,7 +26,13 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 )
 
+function Alert (props: AlertProps) {
+  return <MuiAlert elevation={6} variant='filled' {...props} />
+}
+
 export default function ImageList () {
+  const [snackbar, setSnackbar] = useState(false)
+  const [downloadResult, setDownloadResult] = useState(true)
   const [list, setList] = useState([])
   // @TODO 对多图片源支持（动态）
   const [searchData] = useState({
@@ -35,6 +42,13 @@ export default function ImageList () {
       method: 'get'
     }
   })
+
+  const snackbarClose = (event?: React.SyntheticEvent, reason?: string) => {
+    if (reason === 'clickaway') {
+      return
+    }
+    setSnackbar(false)
+  }
 
   // searchData 变化后调用
   useEffect(() => {
@@ -59,6 +73,8 @@ export default function ImageList () {
         setList(msg?.data?.images || [])
         break
       case EventType.DOWNLOAD:
+        setDownloadResult(msg.data.success)
+        setSnackbar(true)
         break
     }
   })
@@ -83,6 +99,17 @@ export default function ImageList () {
 
   return (
     <div className={classes.root}>
+      {/* 下载结果提示条 */}
+      <Snackbar
+        open={snackbar}
+        onClose={snackbarClose}
+        autoHideDuration={2000}
+        anchorOrigin={{ horizontal: 'center', vertical: 'top' }}
+      >
+        <Alert severity={downloadResult ? 'success' : 'error'}>
+          {downloadResult ? '下载成功。' : '下载失败'}
+        </Alert>
+      </Snackbar>
       <Grid container spacing={3}>
         {imgGrids}
       </Grid>
