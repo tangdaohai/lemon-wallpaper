@@ -3,6 +3,7 @@ import { IpcMainEvent } from 'electron'
 import { IncomingMessage } from 'http'
 import { createWriteStream, promises as fsPromises } from 'fs'
 import { join } from 'path'
+import wallpaper from 'wallpaper'
 import { EventType } from 'lemon-utils'
 import { get as getConfig } from '../config'
 const request = require('request')
@@ -24,6 +25,7 @@ export default async function (event: IpcMainEvent, msg: { type: string, data: a
       break
     case EventType.SET_DESKTOP:
       // 设置桌面
+      result = await setDesktop(msg.data)
       break
   }
   event.reply('client', {
@@ -59,8 +61,15 @@ async function proxy (data: any): Promise<object> {
   })
 }
 
+interface DownLoadResult {
+  success: boolean;
+  content: {
+    url: string,
+    saveImgName?: string
+  }
+}
 // 下载图片
-async function download (data: any): Promise<object> {
+async function download (data: any): Promise<DownLoadResult> {
   const { url, type } = data
   const saveImgPath = getConfig().downLoadPath
   console.log('图片保存地址：', saveImgPath)
@@ -78,6 +87,7 @@ async function download (data: any): Promise<object> {
     case 'biying':
       imgName = url.match(/id=.*\.jpg/)[0]
   }
+  const saveImgName = join(saveImgPath, imgName)
   return new Promise(resolve => {
     request(url, (err: any, response: IncomingMessage, body: any) => {
       if (err) {
@@ -86,15 +96,32 @@ async function download (data: any): Promise<object> {
           content: {
             url
           }
-        })
+        } as DownLoadResult)
         return
       }
       resolve({
         success: true,
         content: {
-          url
+          url,
+          saveImgName
         }
-      })
-    }).pipe(createWriteStream(join(saveImgPath, imgName)))
+      } as DownLoadResult)
+    }).pipe(createWriteStream(saveImgName))
   })
+}
+
+// 设置壁纸
+async function setDesktop (data: any): Promise<object> {
+  const downloadResult = await download(data)
+  if (downloadResult.success) {
+    const saveImgName = downloadResult.content.saveImgName!
+    // 设置壁纸
+    await wallpaper.set(saveImgName)
+    // 验证是否已设置完成
+    return {
+      success: saveImgName === await wallpaper.get()
+    }
+  }
+
+  return { success: false }
 }
