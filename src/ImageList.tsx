@@ -67,6 +67,17 @@ export default function ImageList () {
     })
   }
 
+  // 设置桌面
+  const setDesktopHandle = (url: string) => {
+    ipcRenderer.send('server', {
+      type: EventType.SET_DESKTOP,
+      data: {
+        url,
+        type: 'biying'
+      }
+    })
+  }
+
   ipcRenderer.on('client', (event: any, msg: any) => {
     switch (msg.type) {
       case EventType.PROXY:
@@ -76,6 +87,8 @@ export default function ImageList () {
         setDownloadResult(msg.data.success)
         setSnackbar(true)
         break
+      case EventType.SET_DESKTOP:
+        console.log('设置成功')
     }
   })
 
@@ -91,7 +104,7 @@ export default function ImageList () {
           <IconButton aria-label='下载图片' onClick={() => downLoadImg(`https://cn.bing.com${val.url}`)}>
             <ArrowDownward />
           </IconButton>
-          <Button variant='contained' color='primary'>设置桌面</Button>
+          <Button variant='contained' color='primary' onClick={() => setDesktopHandle(`https://cn.bing.com${val.url}`)}>设置桌面</Button>
         </CardActions>
       </Card>
     </Grid>
