@@ -32,7 +32,7 @@ function Alert (props: AlertProps) {
 
 export default function ImageList () {
   const [snackbar, setSnackbar] = useState(false)
-  const [downloadResult, setDownloadResult] = useState(true)
+  const [downloadResult, setDownloadResult] = useState({ result: false, msg: '' })
   const [list, setList] = useState([])
   // @TODO 对多图片源支持（动态）
   const [searchData] = useState({
@@ -79,16 +79,22 @@ export default function ImageList () {
   }
 
   ipcRenderer.on('client', (event: any, msg: any) => {
+    const isSuccess = msg.data.success
+    let snackbarMsg = ''
     switch (msg.type) {
       case EventType.PROXY:
         setList(msg?.data?.images || [])
         break
       case EventType.DOWNLOAD:
-        setDownloadResult(msg.data.success)
+      case EventType.SET_DESKTOP:
+        if (msg.type === EventType.DOWNLOAD) {
+          snackbarMsg = isSuccess ? '下载成功。' : '下载失败。'
+        } else {
+          snackbarMsg = isSuccess ? '设置成功。' : '设置失败。'
+        }
+        setDownloadResult({ result: isSuccess, msg: snackbarMsg })
         setSnackbar(true)
         break
-      case EventType.SET_DESKTOP:
-        console.log('设置成功')
     }
   })
 
@@ -119,8 +125,8 @@ export default function ImageList () {
         autoHideDuration={2000}
         anchorOrigin={{ horizontal: 'center', vertical: 'top' }}
       >
-        <Alert severity={downloadResult ? 'success' : 'error'}>
-          {downloadResult ? '下载成功。' : '下载失败'}
+        <Alert severity={downloadResult.result ? 'success' : 'error'}>
+          {downloadResult.msg}
         </Alert>
       </Snackbar>
       <Grid container spacing={3}>
