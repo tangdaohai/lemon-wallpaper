@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, ChangeEvent } from 'react'
 import clsx from 'clsx'
 import { ThemeProvider, makeStyles, Theme, createStyles, useTheme, fade } from '@material-ui/core/styles'
 import createCustomTheme from './theme'
@@ -26,6 +26,7 @@ import FavoriteIcon from '@material-ui/icons/Favorite'
 import SearchIcon from '@material-ui/icons/Search'
 
 import ImageList from './ImageList'
+import dataSourceConfig from './data-source-config'
 
 const drawerWidth = 240
 const menusList = [
@@ -147,7 +148,8 @@ export default function App () {
   const customTheme = createCustomTheme(true)
   const classes = useStyles()
   const theme = useTheme()
-  const [open, setOpen] = React.useState(false)
+  const [open, setOpen] = useState(false)
+  const [dataSource, setDataSource] = useState<keyof typeof dataSourceConfig>('biying')
 
   const handleDrawerOpen = () => {
     setOpen(true)
@@ -155,6 +157,10 @@ export default function App () {
 
   const handleDrawerClose = () => {
     setOpen(false)
+  }
+
+  const dataSourceSelect = (event: ChangeEvent<{ value: unknown }>) => {
+    setDataSource(event.target.value as keyof typeof dataSourceConfig)
   }
 
   return (
@@ -179,26 +185,25 @@ export default function App () {
             <Typography className={classes.title} variant='h6' noWrap>
               Lemon Wallpaper
             </Typography>
-            <Tooltip title='切换数据源'>
-              <Select value={10}>
-                <MenuItem value={10}>必应壁纸（cn）</MenuItem>
-                <MenuItem value={20}>unsplash</MenuItem>
-                <MenuItem value={30}>wallhaven</MenuItem>
-              </Select>
-            </Tooltip>
-            <div className={classes.search}>
-              <div className={classes.searchIcon}>
-                <SearchIcon />
-              </div>
-              <InputBase
-                placeholder='Search'
-                classes={{
-                  root: classes.inputRoot,
-                  input: classes.inputInput
-                }}
-                inputProps={{ 'aria-label': 'search' }}
-              />
-            </div>
+            <Select value={dataSource} onChange={dataSourceSelect}>
+              {Object.values(dataSourceConfig).map(val => <MenuItem key={val.key} value={val.key}>{val.name}</MenuItem>)}
+            </Select>
+            {
+              dataSourceConfig[dataSource]!.canSearch &&
+                <div className={classes.search}>
+                  <div className={classes.searchIcon}>
+                    <SearchIcon />
+                  </div>
+                  <InputBase
+                    placeholder='Search'
+                    classes={{
+                      root: classes.inputRoot,
+                      input: classes.inputInput
+                    }}
+                    inputProps={{ 'aria-label': 'search' }}
+                  />
+                </div>
+            }
             <Tooltip title='访问 Github'>
               <IconButton>
                 <GitHub />
