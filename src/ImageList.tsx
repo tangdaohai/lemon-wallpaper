@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
-import { Grid, Card, CardMedia, CardActionArea, CardActions, IconButton, Button, Snackbar } from '@material-ui/core'
+import { Grid, Card, CardMedia, CardActionArea, CardActions, IconButton, Button, Snackbar, TablePagination } from '@material-ui/core'
 import MuiAlert, { AlertProps } from '@material-ui/lab/Alert'
 import { EventType } from 'lemon-utils'
 import { ArrowDownward } from '@material-ui/icons'
@@ -34,14 +34,28 @@ export default function ImageList () {
   const [snackbar, setSnackbar] = useState(false)
   const [downloadResult, setDownloadResult] = useState({ result: false, msg: '' })
   const [list, setList] = useState([])
+  // 页码
+  const [pageNum, setPageNum] = useState(0)
+  // 每页几条
+  const [rowsPerPage, setRowsPerPage] = React.useState(5)
   // @TODO 对多图片源支持（动态）
   const [searchData] = useState({
     type: EventType.PROXY,
     data: {
-      url: 'https://cn.bing.com/HPImageArchive.aspx?format=js&idx=0&n=7&nc=1582381253445&pid=hp',
+      url: 'https://www.bing.com/HPImageArchive.aspx?format=js&idx=24&n=8&mkt=zh-cn',
+      // url: 'https://cn.bing.com/HPImageArchive.aspx?format=js&idx=16&n=24&pid=hp',
       method: 'get'
     }
   })
+
+  // 分页事件
+  const handleChangePage = (event: unknown, newPage: number) => {
+    setPageNum(newPage)
+  }
+  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setRowsPerPage(parseInt(event.target.value, 10))
+    setPageNum(0)
+  }
 
   const snackbarClose = (event?: React.SyntheticEvent, reason?: string) => {
     if (reason === 'clickaway') {
@@ -129,6 +143,15 @@ export default function ImageList () {
           {downloadResult.msg}
         </Alert>
       </Snackbar>
+      <TablePagination
+        rowsPerPageOptions={[5, 10, 25]}
+        component='div'
+        count={-1}
+        rowsPerPage={rowsPerPage}
+        page={pageNum}
+        onChangePage={handleChangePage}
+        onChangeRowsPerPage={handleChangeRowsPerPage}
+      />
       <Grid container spacing={3}>
         {imgGrids}
       </Grid>
