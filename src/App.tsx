@@ -2,26 +2,29 @@ import React, { useState, ChangeEvent } from 'react'
 import clsx from 'clsx'
 import { ThemeProvider, makeStyles, Theme, createStyles, useTheme, fade } from '@material-ui/core/styles'
 import createCustomTheme from './theme'
-import Drawer from '@material-ui/core/Drawer'
-import CssBaseline from '@material-ui/core/CssBaseline'
-import AppBar from '@material-ui/core/AppBar'
-import Toolbar from '@material-ui/core/Toolbar'
-import Tooltip from '@material-ui/core/Tooltip'
-import Select from '@material-ui/core/Select'
-import MenuItem from '@material-ui/core/MenuItem'
-import InputBase from '@material-ui/core/InputBase'
-import List from '@material-ui/core/List'
-import Typography from '@material-ui/core/Typography'
-import Divider from '@material-ui/core/Divider'
-import IconButton from '@material-ui/core/IconButton'
+import {
+  Drawer,
+  CssBaseline,
+  AppBar,
+  Toolbar,
+  Tooltip,
+  Select,
+  MenuItem,
+  InputBase,
+  List,
+  Typography,
+  Divider,
+  IconButton,
+  ListItem,
+  ListItemText,
+  ListItemIcon
+} from '@material-ui/core'
 import MenuIcon from '@material-ui/icons/Menu'
-import GitHub from '@material-ui/icons/GitHub'
+import GitHubIcon from '@material-ui/icons/GitHub'
 import Brightness7Icon from '@material-ui/icons/Brightness7'
 import Brightness4Icon from '@material-ui/icons/Brightness4'
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft'
 import ChevronRightIcon from '@material-ui/icons/ChevronRight'
-import ListItem from '@material-ui/core/ListItem'
-import { ListItemText, ListItemIcon } from '@material-ui/core'
 import FavoriteIcon from '@material-ui/icons/Favorite'
 import SearchIcon from '@material-ui/icons/Search'
 
@@ -206,7 +209,7 @@ export default function App () {
             }
             <Tooltip title='访问 Github'>
               <IconButton>
-                <GitHub />
+                <GitHubIcon />
               </IconButton>
             </Tooltip>
             <Tooltip title='切换深色/浅色主题'>
