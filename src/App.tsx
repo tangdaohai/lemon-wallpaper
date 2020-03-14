@@ -251,7 +251,7 @@ export default function App () {
           })}
         >
           <div className={classes.drawerHeader} />
-          <ImageList />
+          <ImageList dataSource={dataSource} />
         </main>
       </ThemeProvider>
     </div>

@@ -6,7 +6,47 @@ import { join } from 'path'
 import wallpaper from 'wallpaper'
 import { EventType } from 'lemon-utils'
 import { get as getConfig } from '../config'
+import dataSourceUrl from '../data-source-url'
 const request = require('request')
+
+/** 生成 URL */
+function buildUrl (type: string, params: any): string|Array<string> {
+  let url: string|Array<string> = ''
+  const startNum = params.pageNum * params.rowsPerPage
+  switch (type) {
+    case 'biying':
+      url = []
+      for (let i = 0; i < params.rowsPerPage; i++) {
+        url.push(`${dataSourceUrl.biying}&d=${startNum + i}`)
+      }
+  }
+  return url
+}
+
+/** request 请求封装 */
+function _request (url: string): Promise<object> {
+  return new Promise(resolve => {
+    console.log('发起请求')
+    request({
+      url,
+      json: true,
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.132 Safari/537.36'
+      }
+    }, (err: any, response: IncomingMessage, body: any) => {
+      console.log('请求结束')
+      console.log('err: ' + err)
+      console.log('typeof body: ' + typeof body)
+      if (err) {
+        resolve({
+          success: false
+        })
+        return
+      }
+      resolve(body)
+    })
+  })
+}
 
 /**
  * 处理 ipcMain 事件
@@ -14,11 +54,14 @@ const request = require('request')
  * @param data 页面发送的数据
  */
 export default async function (event: IpcMainEvent, msg: { type: string, data: any}) {
-  let result: object = {}
+  let result: object | Array<any> = {}
   switch (msg.type) {
     case EventType.PROXY:
       // 请求转发
       result = await proxy(msg.data)
+      if (Array.isArray(result)) {
+        result = result.map(val => val.data)
+      }
       break
     case EventType.DOWNLOAD:
       result = await download(msg.data)
@@ -38,29 +81,22 @@ export default async function (event: IpcMainEvent, msg: { type: string, data: a
  * http 代理
  * @param data
  */
-async function proxy (data: any): Promise<object> {
-  const { url, method } = data
-  return new Promise(resolve => {
-    console.log('发起请求')
-    request({
-      url,
-      method,
-      json: true
-    }, (err: any, response: IncomingMessage, body: any) => {
-      console.log('请求结束')
-      console.log('err: ' + err)
-      console.log('typeof body: ' + typeof body)
-      if (err) {
-        resolve({
-          success: false
-        })
-        return
-      }
-      resolve(body)
-    })
-  })
+async function proxy (data: any): Promise<object|Array<object>> {
+  const url = buildUrl(data.type, data.params)
+  if (Array.isArray(url)) {
+    const result = await Promise.all(url.map(val => _request(val)))
+    return result
+  } else {
+    return _request(url)
+  }
 }
-
+proxy({
+  type: 'biying',
+  params: {
+    pageNum: 0,
+    rowsPerPage: 2
+  }
+})
 interface DownLoadResult {
   success: boolean;
   content: {

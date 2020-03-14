@@ -30,7 +30,12 @@ function Alert (props: AlertProps) {
   return <MuiAlert elevation={6} variant='filled' {...props} />
 }
 
-export default function ImageList () {
+interface ImageListProps {
+  dataSource: string;
+}
+
+export default function ImageList (props: ImageListProps) {
+  console.log(props.dataSource)
   const [snackbar, setSnackbar] = useState(false)
   const [downloadResult, setDownloadResult] = useState({ result: false, msg: '' })
   const [list, setList] = useState([])
@@ -38,25 +43,42 @@ export default function ImageList () {
   const [pageNum, setPageNum] = useState(0)
   // 每页几条
   const [rowsPerPage, setRowsPerPage] = React.useState(5)
+
+  useEffect(() => {
+    setPageNum(0)
+  }, [props.dataSource])
+
   // @TODO 对多图片源支持（动态）
-  const [searchData] = useState({
-    type: EventType.PROXY,
-    data: {
-      url: 'https://www.bing.com/HPImageArchive.aspx?format=js&idx=24&n=8&mkt=zh-cn',
-      // url: 'https://cn.bing.com/HPImageArchive.aspx?format=js&idx=16&n=24&pid=hp',
-      method: 'get'
+  // 生成查询对象
+  useEffect(() => {
+    const searchData = {
+      type: EventType.PROXY,
+      data: {
+        type: props.dataSource,
+        params: {
+          pageNum,
+          rowsPerPage
+        }
+      }
     }
-  })
+    ipcRenderer.send('server', searchData)
+    console.log(searchData)
+    // 因为 数据源与当前分页数量变动时都会重置 pageNum，所以此处只监听 pageNum 变动即可
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pageNum])
 
   // 分页事件
   const handleChangePage = (event: unknown, newPage: number) => {
     setPageNum(newPage)
   }
+
+  // 每页显示数量变化
   const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
     setRowsPerPage(parseInt(event.target.value, 10))
     setPageNum(0)
   }
 
+  // 关闭提示框
   const snackbarClose = (event?: React.SyntheticEvent, reason?: string) => {
     if (reason === 'clickaway') {
       return
@@ -64,19 +86,13 @@ export default function ImageList () {
     setSnackbar(false)
   }
 
-  // searchData 变化后调用
-  useEffect(() => {
-    console.log('server search', searchData)
-    ipcRenderer.send('server', searchData)
-  }, [searchData])
-
   // 下载图片
   const downLoadImg = (url: string) => {
     ipcRenderer.send('server', {
       type: EventType.DOWNLOAD,
       data: {
         url,
-        type: 'biying'
+        type: props.dataSource
       }
     })
   }
@@ -87,7 +103,7 @@ export default function ImageList () {
       type: EventType.SET_DESKTOP,
       data: {
         url,
-        type: 'biying'
+        type: props.dataSource
       }
     })
   }
@@ -97,7 +113,8 @@ export default function ImageList () {
     let snackbarMsg = ''
     switch (msg.type) {
       case EventType.PROXY:
-        setList(msg?.data?.images || [])
+        console.log(msg)
+        setList(msg?.data || [])
         break
       case EventType.DOWNLOAD:
       case EventType.SET_DESKTOP:
@@ -113,18 +130,20 @@ export default function ImageList () {
   })
 
   const classes = useStyles()
-
+  useEffect(() => {
+    console.log(list)
+  }, [list])
   const imgGrids = list && list.map((val: any, index) => (
     <Grid key={index} item xl={3} lg={4} md={6} sm={12}>
       <Card className={classes.card} raised>
         <CardActionArea>
-          <CardMedia className={classes.cardMedia} image={`https://cn.bing.com${val.url}`} title='Lemon wallpaper' />
+          <CardMedia className={classes.cardMedia} image={val.url} title='Lemon wallpaper' />
         </CardActionArea>
         <CardActions className={classes.cardActions}>
-          <IconButton aria-label='下载图片' onClick={() => downLoadImg(`https://cn.bing.com${val.url}`)}>
+          <IconButton aria-label='下载图片' onClick={() => downLoadImg(val.url)}>
             <ArrowDownward />
           </IconButton>
-          <Button variant='contained' color='primary' onClick={() => setDesktopHandle(`https://cn.bing.com${val.url}`)}>设置桌面</Button>
+          <Button variant='contained' color='primary' onClick={() => setDesktopHandle(val.url)}>设置桌面</Button>
         </CardActions>
       </Card>
     </Grid>
