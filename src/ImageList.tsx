@@ -35,7 +35,6 @@ interface ImageListProps {
 }
 
 export default function ImageList (props: ImageListProps) {
-  console.log(props.dataSource)
   const [snackbar, setSnackbar] = useState(false)
   const [downloadResult, setDownloadResult] = useState({ result: false, msg: '' })
   const [list, setList] = useState([])
@@ -62,7 +61,6 @@ export default function ImageList (props: ImageListProps) {
       }
     }
     ipcRenderer.send('server', searchData)
-    console.log(searchData)
     // 因为 数据源与当前分页数量变动时都会重置 pageNum，所以此处只监听 pageNum 变动即可
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pageNum])
@@ -114,7 +112,6 @@ export default function ImageList (props: ImageListProps) {
     let snackbarMsg = ''
     switch (msg.type) {
       case EventType.PROXY:
-        console.log(msg)
         setList(msg?.data || [])
         break
       case EventType.DOWNLOAD:
@@ -140,9 +137,6 @@ export default function ImageList (props: ImageListProps) {
   }, [])
 
   const classes = useStyles()
-  useEffect(() => {
-    console.log(list)
-  }, [list])
   const imgGrids = list && list.map((val: any, index) => (
     <Grid key={index} item xl={3} lg={4} md={6} sm={12}>
       <Card className={classes.card} raised>
