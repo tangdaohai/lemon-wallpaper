@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
-import { Grid, Card, CardMedia, CardActionArea, CardActions, IconButton, Button, Snackbar, TablePagination } from '@material-ui/core'
+import { Grid, Card, CardMedia, CardActionArea, CardContent, CardActions, Typography, IconButton, Button, Snackbar, TablePagination } from '@material-ui/core'
 import MuiAlert, { AlertProps } from '@material-ui/lab/Alert'
 import { EventType } from 'lemon-utils'
 import { ArrowDownward } from '@material-ui/icons'
@@ -108,7 +108,8 @@ export default function ImageList (props: ImageListProps) {
     })
   }
 
-  ipcRenderer.on('client', (event: any, msg: any) => {
+  // ipc 通信监听方法
+  const ipcClientFn = (event: any, msg: any) => {
     const isSuccess = msg.data.success
     let snackbarMsg = ''
     switch (msg.type) {
@@ -127,7 +128,16 @@ export default function ImageList (props: ImageListProps) {
         setSnackbar(true)
         break
     }
-  })
+  }
+
+  //  ipc 通信绑定监听事件
+  useEffect(() => {
+    ipcRenderer.on('client', ipcClientFn)
+    return () => {
+      // 解绑事件
+      ipcRenderer.off('client', ipcClientFn)
+    }
+  }, [])
 
   const classes = useStyles()
   useEffect(() => {
@@ -139,6 +149,13 @@ export default function ImageList (props: ImageListProps) {
         <CardActionArea>
           <CardMedia className={classes.cardMedia} image={val.url} title='Lemon wallpaper' />
         </CardActionArea>
+        {/* 必应壁纸 显示此壁纸是哪一天的 */}
+        {
+          props.dataSource === 'biying' &&
+            <CardContent>
+              <Typography variant='body2' color='textSecondary' component='p'>{val.enddate}</Typography>
+            </CardContent>
+        }
         <CardActions className={classes.cardActions}>
           <IconButton aria-label='下载图片' onClick={() => downLoadImg(val.url)}>
             <ArrowDownward />
