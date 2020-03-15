@@ -90,13 +90,6 @@ async function proxy (data: any): Promise<object|Array<object>> {
     return _request(url)
   }
 }
-proxy({
-  type: 'biying',
-  params: {
-    pageNum: 0,
-    rowsPerPage: 2
-  }
-})
 interface DownLoadResult {
   success: boolean;
   content: {
@@ -104,6 +97,7 @@ interface DownLoadResult {
     saveImgName?: string
   }
 }
+download({ url: 'https://www4.bing.com/az/hprichbg/rb/FrenchColorado_ZH-CN9446885520_1920x1080.jpg', type: 'biying' })
 // 下载图片
 async function download (data: any): Promise<DownLoadResult> {
   const { url, type } = data
@@ -121,12 +115,13 @@ async function download (data: any): Promise<DownLoadResult> {
   let imgName: string = 'default-' + Date.now() + '.jpg'
   switch (type) {
     case 'biying':
-      imgName = url.match(/id=.*\.jpg/)[0]
+      imgName = url.split(/^.*\//)[1]
   }
   const saveImgName = join(saveImgPath, imgName)
   return new Promise(resolve => {
     request(url, (err: any, response: IncomingMessage, body: any) => {
       if (err) {
+        console.log(err)
         resolve({
           success: false,
           content: {
