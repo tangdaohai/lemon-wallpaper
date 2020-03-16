@@ -97,7 +97,6 @@ interface DownLoadResult {
     saveImgName?: string
   }
 }
-download({ url: 'https://www4.bing.com/az/hprichbg/rb/FrenchColorado_ZH-CN9446885520_1920x1080.jpg', type: 'biying' })
 // 下载图片
 async function download (data: any): Promise<DownLoadResult> {
   const { url, type } = data
