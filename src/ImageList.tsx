@@ -41,29 +41,11 @@ export default function ImageList (props: ImageListProps) {
   // 页码
   const [pageNum, setPageNum] = useState(0)
   // 每页几条
-  const [rowsPerPage, setRowsPerPage] = React.useState(5)
+  const [rowsPerPage, setRowsPerPage] = useState(5)
 
   useEffect(() => {
     setPageNum(0)
   }, [props.dataSource])
-
-  // @TODO 对多图片源支持（动态）
-  // 生成查询对象
-  useEffect(() => {
-    const searchData = {
-      type: EventType.PROXY,
-      data: {
-        type: props.dataSource,
-        params: {
-          pageNum,
-          rowsPerPage
-        }
-      }
-    }
-    ipcRenderer.send('server', searchData)
-    // 因为 数据源与当前分页数量变动时都会重置 pageNum，所以此处只监听 pageNum 变动即可
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pageNum])
 
   // 分页事件
   const handleChangePage = (event: unknown, newPage: number) => {
@@ -75,6 +57,23 @@ export default function ImageList (props: ImageListProps) {
     setRowsPerPage(parseInt(event.target.value, 10))
     setPageNum(0)
   }
+
+  // @TODO 对多图片源支持（动态）
+  // 生成查询对象
+  useEffect(() => {
+    console.log('search')
+    const searchData = {
+      type: EventType.PROXY,
+      data: {
+        type: props.dataSource,
+        params: {
+          pageNum,
+          rowsPerPage
+        }
+      }
+    }
+    ipcRenderer.send('server', searchData)
+  }, [props.dataSource, pageNum, rowsPerPage])
 
   // 关闭提示框
   const snackbarClose = (event?: React.SyntheticEvent, reason?: string) => {
