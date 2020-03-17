@@ -1,3 +1,4 @@
 export default {
-  biying: 'https://bing.ioliu.cn/v1/?type=json'
+  biying: 'https://bing.ioliu.cn/v1/?type=json',
+  unsplash: 'https://unsplash.com/napi/photos'
 }

@@ -19,6 +19,14 @@ function buildUrl (type: string, params: any): string|Array<string> {
       for (let i = 0; i < params.rowsPerPage; i++) {
         url.push(`${dataSourceUrl.biying}&d=${startNum + i}`)
       }
+      break
+    case 'unsplash':
+      // params.pageNum 前端中的第一页是 0，而 unsplash 的第一页是 1
+      url = `${dataSourceUrl.unsplash}/?page=${params.pageNum + 1}&per_page=${params.rowsPerPage}`
+      if (params.query) {
+        url += `&query=${params.query}`
+      }
+      break
   }
   return url
 }
