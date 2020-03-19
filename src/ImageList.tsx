@@ -68,7 +68,8 @@ export default function ImageList (props: ImageListProps) {
         type: props.dataSource,
         params: {
           pageNum,
-          rowsPerPage
+          rowsPerPage,
+          query: 'cat'
         }
       }
     }
@@ -142,18 +143,15 @@ export default function ImageList (props: ImageListProps) {
         <CardActionArea>
           <CardMedia className={classes.cardMedia} image={val.url} title='Lemon wallpaper' />
         </CardActionArea>
-        {/* 必应壁纸 显示此壁纸是哪一天的 */}
-        {
-          props.dataSource === 'biying' &&
-            <CardContent>
-              <Typography variant='body2' color='textSecondary' component='p'>{val.enddate}</Typography>
-            </CardContent>
-        }
+        <CardContent>
+          {val.time && <Typography variant='body2' color='textSecondary' component='p'>{val.time}</Typography>}
+          <Typography variant='body2' color='textSecondary' component='p'>分辨率: {val.resolution}</Typography>
+        </CardContent>
         <CardActions className={classes.cardActions}>
-          <IconButton aria-label='下载图片' onClick={() => downLoadImg(val.url)}>
+          <IconButton aria-label='下载图片' onClick={() => downLoadImg(val.downloadUrl)}>
             <ArrowDownward />
           </IconButton>
-          <Button variant='contained' color='primary' onClick={() => setDesktopHandle(val.url)}>设置桌面</Button>
+          <Button variant='contained' color='primary' onClick={() => setDesktopHandle(val.downloadUrl)}>设置桌面</Button>
         </CardActions>
       </Card>
     </Grid>

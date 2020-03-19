@@ -34,7 +34,7 @@ function buildUrl (type: string, params: any): string|Array<string> {
 /** request 请求封装 */
 function _request (url: string): Promise<object> {
   return new Promise(resolve => {
-    console.log('发起请求')
+    console.log('发起请求:', url)
     request({
       url,
       json: true,
@@ -55,21 +55,17 @@ function _request (url: string): Promise<object> {
     })
   })
 }
-
 /**
  * 处理 ipcMain 事件
  * @param event IpcMainEvent
  * @param data 页面发送的数据
  */
-export default async function (event: IpcMainEvent, msg: { type: string, data: any}) {
+export default async function test (event: IpcMainEvent, msg: { type: string, data: any}) {
   let result: object | Array<any> = {}
   switch (msg.type) {
     case EventType.PROXY:
       // 请求转发
       result = await proxy(msg.data)
-      if (Array.isArray(result)) {
-        result = result.map(val => val.data)
-      }
       break
     case EventType.DOWNLOAD:
       result = await download(msg.data)
@@ -91,12 +87,32 @@ export default async function (event: IpcMainEvent, msg: { type: string, data: a
  */
 async function proxy (data: any): Promise<object|Array<object>> {
   const url = buildUrl(data.type, data.params)
+  let result: Object|Array<any>
   if (Array.isArray(url)) {
-    const result = await Promise.all(url.map(val => _request(val)))
-    return result
+    result = await Promise.all(url.map(val => _request(val)))
   } else {
-    return _request(url)
+    result = await _request(url)
   }
+
+  // 转换数据格式
+  switch (data.type) {
+    case 'biying':
+      if (Array.isArray(result)) {
+        result = result?.map(val => val.data).map(val => ({ time: val.enddate, url: val.url, downloadUrl: val.url, resolution: '1920 x 1080' })) || []
+      }
+      break
+    case 'unsplash':
+      result = (result as { results: Array<any> }).results!.map(val => {
+        return {
+          time: val.created_at,
+          url: val.urls.small,
+          downloadUrl: val.urls.full,
+          resolution: val.width + ' x ' + val.height
+        }
+      })
+  }
+
+  return result
 }
 interface DownLoadResult {
   success: boolean;
