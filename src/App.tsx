@@ -17,7 +17,8 @@ import {
   IconButton,
   ListItem,
   ListItemText,
-  ListItemIcon
+  ListItemIcon,
+  Paper
 } from '@material-ui/core'
 import MenuIcon from '@material-ui/icons/Menu'
 import GitHubIcon from '@material-ui/icons/GitHub'
@@ -89,6 +90,8 @@ const useStyles = makeStyles((theme: Theme) =>
       width: theme.spacing(7),
       height: '100%',
       position: 'absolute',
+      top: 0,
+      right: 0,
       pointerEvents: 'none',
       display: 'flex',
       alignItems: 'center',
@@ -98,7 +101,7 @@ const useStyles = makeStyles((theme: Theme) =>
       color: 'inherit'
     },
     inputInput: {
-      padding: theme.spacing(1, 1, 1, 7),
+      padding: theme.spacing(1, 7, 1, 1),
       transition: theme.transitions.create('width'),
       width: '100%',
       [theme.breakpoints.up('sm')]: {
@@ -166,6 +169,13 @@ export default function App () {
     setDataSource(event.target.value as keyof typeof dataSourceConfig)
   }
 
+  const searchChange = (event: ChangeEvent<{ value: unknown }>) => {
+    console.log(event.target.value)
+  }
+  const submit = (event: ChangeEvent<{ value: unknown }>) => {
+    console.log(event)
+  }
+
   return (
     <div className={classes.root}>
       <ThemeProvider theme={customTheme}>
@@ -193,19 +203,20 @@ export default function App () {
             </Select>
             {
               dataSourceConfig[dataSource]!.canSearch &&
-                <div className={classes.search}>
-                  <div className={classes.searchIcon}>
-                    <SearchIcon />
-                  </div>
+                <Paper component='form' onSubmit={submit} className={classes.search}>
                   <InputBase
-                    placeholder='Search'
+                    placeholder='enter for search'
+                    onChange={searchChange}
                     classes={{
                       root: classes.inputRoot,
                       input: classes.inputInput
                     }}
                     inputProps={{ 'aria-label': 'search' }}
                   />
-                </div>
+                  <div className={classes.searchIcon}>
+                    <SearchIcon />
+                  </div>
+                </Paper>
             }
             <Tooltip title='访问 Github'>
               <IconButton>
