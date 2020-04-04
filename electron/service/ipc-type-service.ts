@@ -23,9 +23,10 @@ function buildUrl (type: string, params: any): string|Array<string> {
     case 'unsplash':
       // params.pageNum 前端中的第一页是 0，而 unsplash 的第一页是 1
       url = `${dataSourceUrl.unsplash}/?page=${params.pageNum + 1}&per_page=${params.rowsPerPage}`
-      if (params.query) {
-        url += `&query=${params.query}`
+      if (!params.query) {
+        params.query = 'natural'
       }
+      url += `&query=${params.query}`
       break
   }
   return url
