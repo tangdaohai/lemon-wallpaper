@@ -18,7 +18,7 @@ import FavoriteIcon from '@material-ui/icons/Favorite'
 
 import ImageList from './ImageList'
 import Header from './components/header'
-
+import GlobalContextProvide from './context/global-context-provide'
 const drawerWidth = 240
 const menusList = [
   {
@@ -80,42 +80,44 @@ export default function App () {
   return (
     <div className={classes.root}>
       <ThemeProvider theme={customTheme}>
-        <CssBaseline />
-        <Header drawerOpen={open} setDrawerOpen={setOpen} themeType={customTheme.palette.type} />
-        <Drawer
-          className={classes.drawer}
-          variant='persistent'
-          anchor='left'
-          open={open}
-          classes={{
-            paper: classes.drawerPaper
-          }}
-        >
-          <div className={classes.drawerHeader}>
-            <IconButton onClick={handleDrawerClose}>
-              {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
-            </IconButton>
-          </div>
-          <Divider />
-          <List>
-            {menusList.map((item, index) => (
-              <ListItem button key={item.text}>
-                <ListItemIcon>
-                  <FavoriteIcon />
-                </ListItemIcon>
-                <ListItemText primary={item.text} />
-              </ListItem>
-            ))}
-          </List>
-        </Drawer>
-        <main
-          className={clsx(classes.content, {
-            [classes.contentShift]: open
-          })}
-        >
-          <div className={classes.drawerHeader} />
-          <ImageList dataSource='unsplash' />
-        </main>
+        <GlobalContextProvide>
+          <CssBaseline />
+          <Header drawerOpen={open} setDrawerOpen={setOpen} themeType={customTheme.palette.type} />
+          <Drawer
+            className={classes.drawer}
+            variant='persistent'
+            anchor='left'
+            open={open}
+            classes={{
+              paper: classes.drawerPaper
+            }}
+          >
+            <div className={classes.drawerHeader}>
+              <IconButton onClick={handleDrawerClose}>
+                {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+              </IconButton>
+            </div>
+            <Divider />
+            <List>
+              {menusList.map((item, index) => (
+                <ListItem button key={item.text}>
+                  <ListItemIcon>
+                    <FavoriteIcon />
+                  </ListItemIcon>
+                  <ListItemText primary={item.text} />
+                </ListItem>
+              ))}
+            </List>
+          </Drawer>
+          <main
+            className={clsx(classes.content, {
+              [classes.contentShift]: open
+            })}
+          >
+            <div className={classes.drawerHeader} />
+            <ImageList />
+          </main>
+        </GlobalContextProvide>
       </ThemeProvider>
     </div>
   )

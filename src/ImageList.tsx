@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react'
+import React, { useContext, useState, useEffect } from 'react'
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
 import { Grid, Card, CardMedia, CardActionArea, CardContent, CardActions, Typography, IconButton, Button, Snackbar, TablePagination } from '@material-ui/core'
 import MuiAlert, { AlertProps } from '@material-ui/lab/Alert'
 import { EventType } from 'lemon-utils'
 import { ArrowDownward } from '@material-ui/icons'
+import GlobalContext from './context/global-context'
 const { ipcRenderer } = window.require('electron')
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -34,7 +35,8 @@ interface ImageListProps {
   dataSource: string;
 }
 
-export default function ImageList (props: ImageListProps) {
+export default function ImageList () {
+  const { searchContent, dataSource } = useContext(GlobalContext)
   const [snackbar, setSnackbar] = useState(false)
   const [downloadResult, setDownloadResult] = useState({ result: false, msg: '' })
   const [list, setList] = useState([])
@@ -45,7 +47,11 @@ export default function ImageList (props: ImageListProps) {
 
   useEffect(() => {
     setPageNum(0)
-  }, [props.dataSource])
+  }, [dataSource, searchContent])
+
+  // useEffect(() => {
+  //   console.log(searchContent)
+  // }, [searchContent])
 
   // 分页事件
   const handleChangePage = (event: unknown, newPage: number) => {
@@ -65,16 +71,16 @@ export default function ImageList (props: ImageListProps) {
     const searchData = {
       type: EventType.PROXY,
       data: {
-        type: props.dataSource,
+        type: dataSource,
         params: {
           pageNum,
           rowsPerPage,
-          query: 'cat'
+          query: searchContent
         }
       }
     }
     ipcRenderer.send('server', searchData)
-  }, [props.dataSource, pageNum, rowsPerPage])
+  }, [dataSource, searchContent, pageNum, rowsPerPage])
 
   // 关闭提示框
   const snackbarClose = (event?: React.SyntheticEvent, reason?: string) => {
@@ -90,7 +96,7 @@ export default function ImageList (props: ImageListProps) {
       type: EventType.DOWNLOAD,
       data: {
         url,
-        type: props.dataSource
+        type: dataSource
       }
     })
   }
@@ -101,7 +107,7 @@ export default function ImageList (props: ImageListProps) {
       type: EventType.SET_DESKTOP,
       data: {
         url,
-        type: props.dataSource
+        type: dataSource
       }
     })
   }

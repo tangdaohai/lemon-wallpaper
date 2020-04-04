@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent, FormEvent } from 'react'
+import React, { useContext, useState, ChangeEvent, FormEvent } from 'react'
 import clsx from 'clsx'
 import {
   AppBar,
@@ -18,6 +18,7 @@ import GitHubIcon from '@material-ui/icons/GitHub'
 import Brightness4Icon from '@material-ui/icons/Brightness4'
 import Brightness7Icon from '@material-ui/icons/Brightness7'
 import dataSourceConfig from '../data-source-config'
+import GlobalContext from '../context/global-context'
 
 const drawerWidth = 240
 const useStyles = makeStyles((theme: Theme) =>
@@ -100,25 +101,32 @@ interface HeaderProps {
   themeType: 'light' | 'dark'
 }
 export default function Header (props: HeaderProps) {
-  const [dataSource, setDataSource] = useState<keyof typeof dataSourceConfig>('unsplash')
+  const { changeSearchContent, dataSource, changeDataSource } = useContext(GlobalContext)
   const classes = useStyles()
   const [searchParam, setSearchParam] = useState<string>('')
 
+  // header 上的打开菜单事件
   const handleDrawerOpen = () => {
     props.setDrawerOpen(true)
   }
 
+  // 数据源选择事件
   const dataSourceSelect = (event: ChangeEvent<{ value: unknown }>) => {
-    setDataSource(event.target.value as keyof typeof dataSourceConfig)
+    changeDataSource(event.target.value as keyof typeof dataSourceConfig)
   }
 
+  // 搜索框的 input 事件监听
   const searchChange = (event: ChangeEvent<{ value: string }>) => {
     setSearchParam(event.target.value)
   }
+
+  // submit 事件
   const submit = (event: FormEvent) => {
+    // 阻止默认行为
     event.preventDefault()
     event.stopPropagation()
-    console.log(searchParam)
+    // 传递搜索内容
+    changeSearchContent(searchParam)
   }
 
   return (
