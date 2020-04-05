@@ -7,12 +7,15 @@ import wallpaper from 'wallpaper'
 import { EventType } from 'lemon-utils'
 import { get as getConfig } from '../config'
 import dataSourceUrl from '../data-source-url'
+import wallhavenParse from '../util/wallhaven-parse'
 const request = require('request')
 
 /** 生成 URL */
 function buildUrl (type: string, params: any): string|Array<string> {
   let url: string|Array<string> = ''
   const startNum = params.pageNum * params.rowsPerPage
+  // 默认搜索条件是 natural
+  const queryText = params.query || 'natural'
   switch (type) {
     case 'biying':
       url = []
@@ -22,23 +25,22 @@ function buildUrl (type: string, params: any): string|Array<string> {
       break
     case 'unsplash':
       // params.pageNum 前端中的第一页是 0，而 unsplash 的第一页是 1
-      url = `${dataSourceUrl.unsplash}/?page=${params.pageNum + 1}&per_page=${params.rowsPerPage}`
-      if (!params.query) {
-        params.query = 'natural'
-      }
-      url += `&query=${params.query}`
+      url = `${dataSourceUrl.unsplash}/?page=${params.pageNum + 1}&per_page=${params.rowsPerPage}&query=${queryText}`
+      break
+    case 'wallhaven':
+      url = `${dataSourceUrl.wallhaven}?q=${queryText}&categories=111&purity=110&page=${params.pageNum + 1}`
       break
   }
   return url
 }
 
 /** request 请求封装 */
-function _request (url: string): Promise<object> {
+function _request (url: string, isJson: boolean = true): Promise<object> {
   return new Promise(resolve => {
     console.log('发起请求:', url)
     request({
       url,
-      json: true,
+      json: isJson,
       headers: {
         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.132 Safari/537.36'
       }
@@ -88,11 +90,11 @@ export default async function test (event: IpcMainEvent, msg: { type: string, da
  */
 async function proxy (data: any): Promise<object|Array<object>> {
   const url = buildUrl(data.type, data.params)
-  let result: Object|Array<any>
+  let result: Object | Array<any> | string
   if (Array.isArray(url)) {
     result = await Promise.all(url.map(val => _request(val)))
   } else {
-    result = await _request(url)
+    result = await _request(url, data.type !== 'wallhaven')
   }
 
   // 转换数据格式
@@ -111,6 +113,13 @@ async function proxy (data: any): Promise<object|Array<object>> {
           resolution: val.width + ' x ' + val.height
         }
       })
+      break
+    case 'wallhaven':
+      if (typeof result === 'string') {
+        // 解析
+        result = wallhavenParse(result)
+      }
+      break
   }
 
   return result
