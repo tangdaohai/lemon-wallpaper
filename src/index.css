@@ -1,4 +1,6 @@
-* {
-  margin: 0;
-  padding: 0;
+
+
+.pagination-root-select-none .MuiToolbar-root p:nth-child(2),
+.pagination-root-select-none .MuiTablePagination-selectRoot {
+  display: none;
 }

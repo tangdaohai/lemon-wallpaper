@@ -49,10 +49,6 @@ export default function ImageList () {
     setPageNum(0)
   }, [dataSource, searchContent])
 
-  // useEffect(() => {
-  //   console.log(searchContent)
-  // }, [searchContent])
-
   // 分页事件
   const handleChangePage = (event: unknown, newPage: number) => {
     setPageNum(newPage)
@@ -177,6 +173,10 @@ export default function ImageList () {
         </Alert>
       </Snackbar>
       <TablePagination
+        classes={{
+          // wallhaven 不可以选择分页条数
+          root: dataSource === 'wallhaven' ? 'pagination-root-select-none' : ''
+        }}
         rowsPerPageOptions={[6, 8, 9, 12, 16, 18]}
         component='div'
         count={-1}
