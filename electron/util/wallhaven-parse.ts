@@ -1,4 +1,4 @@
-const cheerio = require('cheerio')
+const cheerio = require('cheerio') as CheerioAPI
 
 interface WallHaven {
   url: string,
