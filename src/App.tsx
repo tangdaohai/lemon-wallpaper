@@ -16,7 +16,7 @@ import ChevronLeftIcon from '@material-ui/icons/ChevronLeft'
 import ChevronRightIcon from '@material-ui/icons/ChevronRight'
 import FavoriteIcon from '@material-ui/icons/Favorite'
 
-import ImageList from './ImageList'
+import ImageList from './components/image-list'
 import Header from './components/header'
 import GlobalContextProvide from './context/global-context-provide'
 const drawerWidth = 240

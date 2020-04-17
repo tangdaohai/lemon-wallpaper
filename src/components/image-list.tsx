@@ -4,8 +4,9 @@ import { Grid, Card, CardMedia, CardActionArea, CardContent, CardActions, Typogr
 import MuiAlert, { AlertProps } from '@material-ui/lab/Alert'
 import { EventType } from 'lemon-utils'
 import { ArrowDownward } from '@material-ui/icons'
-import GlobalContext from './context/global-context'
+import GlobalContext from '../context/global-context'
 const { ipcRenderer } = window.require('electron')
+
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
@@ -29,10 +30,6 @@ const useStyles = makeStyles((theme: Theme) =>
 
 function Alert (props: AlertProps) {
   return <MuiAlert elevation={6} variant='filled' {...props} />
-}
-
-interface ImageListProps {
-  dataSource: string;
 }
 
 export default function ImageList () {
