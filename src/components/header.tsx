@@ -9,7 +9,9 @@ import {
   MenuItem,
   Paper,
   InputBase,
-  Tooltip
+  Tooltip,
+  Checkbox,
+  FormControlLabel
 } from '@material-ui/core'
 import { makeStyles, createStyles, Theme, fade } from '@material-ui/core/styles'
 import MenuIcon from '@material-ui/icons/Menu'
@@ -21,6 +23,8 @@ import dataSourceConfig from '../data-source-config'
 import GlobalContext from '../context/global-context'
 
 const drawerWidth = 240
+const CategoriesLabel = ['一般', '动漫', '人物']
+const PurityLabel = ['SFW', 'Sketchy']
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     appBar: {
@@ -101,9 +105,15 @@ interface HeaderProps {
   themeType: 'light' | 'dark'
 }
 export default function Header (props: HeaderProps) {
+  // context 数据
   const { changeSearchContent, dataSource, changeDataSource } = useContext(GlobalContext)
   const classes = useStyles()
+
   const [searchParam, setSearchParam] = useState<string>('')
+  // wall haven 壁纸分类选项
+  const [whCategories, setWhCategories] = useState([1, 1, 1])
+  // 壁纸尺度，SFW 适合出现在工作场合，Sketchy 不太适合
+  const [whPurity, setWhPurity] = useState([1, 1])
 
   // header 上的打开菜单事件
   const handleDrawerOpen = () => {
@@ -127,6 +137,18 @@ export default function Header (props: HeaderProps) {
     event.stopPropagation()
     // 传递搜索内容
     changeSearchContent(searchParam)
+  }
+
+  // wall haven 壁纸分类选项 change
+  const whCategoriesChangeHandle = (index: number) => {
+    const arr = [...whCategories]
+    arr[index] = (arr[index] + 1) % 2
+    setWhCategories(arr)
+  }
+  const whPurityChangeHandle = (index: number) => {
+    const arr = [...whPurity]
+    arr[index] = (arr[index] + 1) % 2
+    setWhPurity(arr)
   }
 
   return (
@@ -167,6 +189,38 @@ export default function Header (props: HeaderProps) {
                     <SearchIcon />
                   </div>
                 </Paper>
+        }
+        {
+          dataSource === 'wallhaven' && whCategories.map((val, index) => {
+            return (
+              <FormControlLabel
+                key={index}
+                control={
+                  <Checkbox
+                    checked={!!val}
+                    onChange={_ => whCategoriesChangeHandle(index)}
+                  />
+                }
+                label={CategoriesLabel[index]}
+              />
+            )
+          })
+        }
+        {
+          dataSource === 'wallhaven' && whPurity.map((val, index) => {
+            return (
+              <FormControlLabel
+                key={index}
+                control={
+                  <Checkbox
+                    checked={!!val}
+                    onChange={_ => whPurityChangeHandle(index)}
+                  />
+                }
+                label={PurityLabel[index]}
+              />
+            )
+          })
         }
         <Tooltip title='访问 Github'>
           <IconButton>
