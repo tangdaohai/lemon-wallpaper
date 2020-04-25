@@ -106,14 +106,16 @@ interface HeaderProps {
 }
 export default function Header (props: HeaderProps) {
   // context 数据
-  const { changeSearchContent, dataSource, changeDataSource } = useContext(GlobalContext)
+  const { changeSearchContent, dataSource, changeDataSource, whParams, changeWhParams } = useContext(GlobalContext)
   const classes = useStyles()
 
   const [searchParam, setSearchParam] = useState<string>('')
   // wall haven 壁纸分类选项
-  const [whCategories, setWhCategories] = useState([1, 1, 1])
+  // const [whCategories, setWhCategories] = useState([1, 1, 1])
   // 壁纸尺度，SFW 适合出现在工作场合，Sketchy 不太适合
-  const [whPurity, setWhPurity] = useState([1, 1])
+  // const [whPurity, setWhPurity] = useState([1, 1])
+  const whCategories = whParams.categories
+  const whPurity = whParams.purity
 
   // header 上的打开菜单事件
   const handleDrawerOpen = () => {
@@ -143,12 +145,20 @@ export default function Header (props: HeaderProps) {
   const whCategoriesChangeHandle = (index: number) => {
     const arr = [...whCategories]
     arr[index] = (arr[index] + 1) % 2
-    setWhCategories(arr)
+    // setWhCategories(arr)
+    changeWhParams({
+      categories: arr,
+      purity: whPurity
+    })
   }
   const whPurityChangeHandle = (index: number) => {
     const arr = [...whPurity]
     arr[index] = (arr[index] + 1) % 2
-    setWhPurity(arr)
+    // setWhPurity(arr)
+    changeWhParams({
+      categories: whCategories,
+      purity: arr
+    })
   }
 
   return (

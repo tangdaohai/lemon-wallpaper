@@ -33,7 +33,7 @@ function Alert (props: AlertProps) {
 }
 
 export default function ImageList () {
-  const { searchContent, dataSource } = useContext(GlobalContext)
+  const { searchContent, dataSource, whParams } = useContext(GlobalContext)
   const [snackbar, setSnackbar] = useState(false)
   const [downloadResult, setDownloadResult] = useState({ result: false, msg: '' })
   const [list, setList] = useState([])
@@ -60,7 +60,6 @@ export default function ImageList () {
   // @TODO 对多图片源支持（动态）
   // 生成查询对象
   useEffect(() => {
-    console.log('search')
     const searchData = {
       type: EventType.PROXY,
       data: {
@@ -68,12 +67,13 @@ export default function ImageList () {
         params: {
           pageNum,
           rowsPerPage,
-          query: searchContent
+          query: searchContent,
+          whParams
         }
       }
     }
     ipcRenderer.send('server', searchData)
-  }, [dataSource, searchContent, pageNum, rowsPerPage])
+  }, [dataSource, searchContent, pageNum, rowsPerPage, whParams])
 
   // 关闭提示框
   const snackbarClose = (event?: React.SyntheticEvent, reason?: string) => {

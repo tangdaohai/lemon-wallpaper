@@ -28,7 +28,7 @@ function buildUrl (type: string, params: any): string|Array<string> {
       url = `${dataSourceUrl.unsplash}/?page=${params.pageNum + 1}&per_page=${params.rowsPerPage}&query=${queryText}`
       break
     case 'wallhaven':
-      url = `${dataSourceUrl.wallhaven}?q=${queryText}&categories=111&purity=110&page=${params.pageNum + 1}`
+      url = `${dataSourceUrl.wallhaven}?q=${queryText}&categories=${params.whParams.categories.join('')}&purity=${params.whParams.purity.join('')}0&page=${params.pageNum + 1}`
       break
   }
   return url
