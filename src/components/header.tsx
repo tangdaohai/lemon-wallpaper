@@ -63,6 +63,7 @@ const useStyles = makeStyles((theme: Theme) =>
         backgroundColor: fade(theme.palette.common.white, 0.25)
       },
       marginLeft: 0,
+      marginRight: 10,
       width: '100%',
       [theme.breakpoints.up('sm')]: {
         marginLeft: theme.spacing(1),
@@ -217,20 +218,27 @@ export default function Header (props: HeaderProps) {
           })
         }
         {
-          dataSource === 'wallhaven' && whPurity.map((val, index) => {
-            return (
-              <FormControlLabel
-                key={index}
-                control={
-                  <Checkbox
-                    checked={!!val}
-                    onChange={_ => whPurityChangeHandle(index)}
-                  />
+          dataSource === 'wallhaven' &&
+            <Tooltip title='WallHaven 图片源对尺度进行了分类。SFW意为可以在工作场合展示，Sketchy则不太适合。'>
+              <div>
+                {
+                  whPurity.map((val, index) => {
+                    return (
+                      <FormControlLabel
+                        key={index}
+                        control={
+                          <Checkbox
+                            checked={!!val}
+                            onChange={_ => whPurityChangeHandle(index)}
+                          />
+                        }
+                        label={PurityLabel[index]}
+                      />
+                    )
+                  })
                 }
-                label={PurityLabel[index]}
-              />
-            )
-          })
+              </div>
+            </Tooltip>
         }
         <Tooltip title='访问 Github'>
           <IconButton>
