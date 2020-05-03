@@ -11,7 +11,8 @@ import {
   IconButton,
   Button,
   Snackbar,
-  TablePagination
+  TablePagination,
+  LinearProgress
 } from '@material-ui/core'
 import MuiAlert, { AlertProps, Color as AlertType } from '@material-ui/lab/Alert'
 import { EventType } from 'lemon-utils'
@@ -33,9 +34,10 @@ const useStyles = makeStyles((theme: Theme) =>
       paddingTop: '56.25%',
       backgroundSize: 'contain'
     },
-    cardActions: {
-      // height: '60px',
-      // justifyContent: 'center'
+    // 进度条
+    linearProgress: {
+      position: 'absolute',
+      width: '100%'
     }
   })
 )
@@ -46,6 +48,7 @@ function Alert (props: AlertProps) {
 
 export default function ImageList () {
   const { searchContent, dataSource, whParams } = useContext(GlobalContext)
+  const [loading, setLoading] = useState(false)
   const [snackbar, setSnackbar] = useState(false)
   const [resultInfo, setResultInfo] = useState<{type: AlertType, content: string}>({ type: 'success', content: '' })
   const [list, setList] = useState([])
@@ -80,12 +83,16 @@ export default function ImageList () {
 
   // 图片列表发起请求
   const listRequest = async (data: any) => {
-    // @TODO 增加 loading
-    const result = await ipcRequest(EventType.PROXY, data)
-    if (result.success) {
-      setList(result?.content || [])
-    } else {
-      // 提示
+    setLoading(true)
+    try {
+      const result = await ipcRequest(EventType.PROXY, data)
+      if (result.success) {
+        setList(result?.content || [])
+      } else {
+        // 提示
+      }
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -101,12 +108,13 @@ export default function ImageList () {
         whParams
       }
     }
-    // ipcRenderer.send('server', searchData)
     listRequest(data)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dataSource, searchContent, pageNum, rowsPerPage, whParams])
 
   // 下载图片
   const downLoadImg = async (url: string) => {
+    setLoading(true)
     try {
       const result = await ipcRequest(EventType.DOWNLOAD, {
         url,
@@ -119,19 +127,28 @@ export default function ImageList () {
       }
     } catch (err) {
       console.log(err)
+    } finally {
+      setLoading(false)
     }
   }
 
   // 设置桌面
   const setDesktopHandle = async (url: string) => {
-    const result = await ipcRequest(EventType.SET_DESKTOP, {
-      url,
-      type: dataSource
-    })
-    if (result.success) {
-      showSnackbar('已设置成功。', 'success')
-    } else {
-      showSnackbar('设置失败。', 'error')
+    setLoading(true)
+    try {
+      const result = await ipcRequest(EventType.SET_DESKTOP, {
+        url,
+        type: dataSource
+      })
+      if (result.success) {
+        showSnackbar('已设置成功。', 'success')
+      } else {
+        showSnackbar('设置失败。', 'error')
+      }
+    } catch (err) {
+      console.log(err)
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -156,7 +173,7 @@ export default function ImageList () {
           {val.time && <Typography variant='body2' color='textSecondary' component='p'>{val.time}</Typography>}
           <Typography variant='body2' color='textSecondary' component='p'>分辨率: {val.resolution}</Typography>
         </CardContent>
-        <CardActions className={classes.cardActions}>
+        <CardActions>
           <IconButton aria-label='下载图片' onClick={() => downLoadImg(val.downloadUrl)}>
             <ArrowDownward />
           </IconButton>
@@ -168,6 +185,7 @@ export default function ImageList () {
 
   return (
     <div className={classes.root}>
+      <LinearProgress className={classes.linearProgress} style={{ display: loading ? '' : 'none' }} />
       {/* 提示框 */}
       <Snackbar
         open={snackbar}
