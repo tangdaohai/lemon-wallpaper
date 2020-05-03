@@ -2,10 +2,8 @@ import { ipcMain } from 'electron'
 
 interface ClientMsg {
   currentSymbol: string,
-  params: {
-    type: string,
-    data: any
-  }
+  type: string,
+  data: any
 }
 type Reply = (data: any) => void
 interface IpcContext {
@@ -29,12 +27,12 @@ ipcMain.on('from-client', (event, clientMsg: ClientMsg) => {
   }
   const ctx: IpcContext = {
     reply,
-    type: clientMsg.params.type
+    type: clientMsg.type
   }
   // 获取缓存的函数，并传递客户端发来的参数
   const _cb = _cbMap.get(ctx.type)
   if (typeof _cb === 'function') {
-    _cb(ctx, clientMsg.params.data)
+    _cb(ctx, clientMsg.data)
   }
 })
 

@@ -1,10 +1,5 @@
 const { ipcRenderer } = window.require('electron')
 
-interface SendParams {
-  type: string,
-  data: any
-}
-
 interface ReceivedParams {
   currentSymbol: string,
   data: any
@@ -28,22 +23,23 @@ ipcRenderer.on('from-server', (event, params: ReceivedParams) => {
 
 /**
  * 向 electron 服务端发送 ipc 通信，可以通过 async/await 方式获得服务端返回的结果
- * @param params SendParams
+ * @param params
  */
-export default function request (params: SendParams): Promise<any> {
+export default function request (type: string, data: any): Promise<any> {
   // @FIXME 生成机制有待优化
   // 生成唯一标识
   const currentSymbol = Date.now() + ''
 
   return new Promise(resolve => {
     // 在 promise 中等待回调被执行
-    _waitMap.set(currentSymbol, data => {
-      resolve(data)
+    _waitMap.set(currentSymbol, result => {
+      resolve(result)
     })
     // 发送到 electron 服务端
     ipcRenderer.send('from-client', {
       currentSymbol,
-      params
+      type,
+      data
     })
   })
 }
