@@ -1,11 +1,11 @@
 import React, { useContext, useState, useEffect } from 'react'
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
 import { Grid, Card, CardMedia, CardActionArea, CardContent, CardActions, Typography, IconButton, Button, Snackbar, TablePagination } from '@material-ui/core'
-import MuiAlert, { AlertProps } from '@material-ui/lab/Alert'
+import MuiAlert, { AlertProps, Color as AlertType } from '@material-ui/lab/Alert'
 import { EventType } from 'lemon-utils'
 import { ArrowDownward } from '@material-ui/icons'
 import GlobalContext from '../context/global-context'
-const { ipcRenderer } = window.require('electron')
+import ipcRequest from '../util/ipc-request'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -35,7 +35,7 @@ function Alert (props: AlertProps) {
 export default function ImageList () {
   const { searchContent, dataSource, whParams } = useContext(GlobalContext)
   const [snackbar, setSnackbar] = useState(false)
-  const [downloadResult, setDownloadResult] = useState({ result: false, msg: '' })
+  const [resultInfo, setResultInfo] = useState<{type: AlertType, content: string}>({ type: 'success', content: '' })
   const [list, setList] = useState([])
   // 页码
   const [pageNum, setPageNum] = useState(0)
@@ -57,23 +57,71 @@ export default function ImageList () {
     setPageNum(0)
   }
 
+  // 显示提示框，对显示内容复制，切换 Snackbar 显示状态
+  const showSnackbar = (content: string, success: AlertType = 'success') => {
+    setResultInfo({
+      type: success,
+      content: content
+    })
+    setSnackbar(true)
+  }
+
+  // 图片列表发起请求
+  const listRequest = async (data: any) => {
+    // @TODO 增加 loading
+    const result = await ipcRequest(EventType.PROXY, data)
+    if (result.success) {
+      setList(result?.content || [])
+    } else {
+      // 提示
+    }
+  }
+
   // @TODO 对多图片源支持（动态）
   // 生成查询对象
   useEffect(() => {
-    const searchData = {
-      type: EventType.PROXY,
-      data: {
-        type: dataSource,
-        params: {
-          pageNum,
-          rowsPerPage,
-          query: searchContent,
-          whParams
-        }
+    const data = {
+      type: dataSource,
+      params: {
+        pageNum,
+        rowsPerPage,
+        query: searchContent,
+        whParams
       }
     }
-    ipcRenderer.send('server', searchData)
+    // ipcRenderer.send('server', searchData)
+    listRequest(data)
   }, [dataSource, searchContent, pageNum, rowsPerPage, whParams])
+
+  // 下载图片
+  const downLoadImg = async (url: string) => {
+    try {
+      const result = await ipcRequest(EventType.DOWNLOAD, {
+        url,
+        type: dataSource
+      })
+      if (result.success) {
+        showSnackbar('下载成功。', 'success')
+      } else {
+        showSnackbar('下载失败。', 'error')
+      }
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  // 设置桌面
+  const setDesktopHandle = async (url: string) => {
+    const result = await ipcRequest(EventType.SET_DESKTOP, {
+      url,
+      type: dataSource
+    })
+    if (result.success) {
+      showSnackbar('已设置成功。', 'success')
+    } else {
+      showSnackbar('设置失败。', 'error')
+    }
+  }
 
   // 关闭提示框
   const snackbarClose = (event?: React.SyntheticEvent, reason?: string) => {
@@ -83,59 +131,9 @@ export default function ImageList () {
     setSnackbar(false)
   }
 
-  // 下载图片
-  const downLoadImg = (url: string) => {
-    ipcRenderer.send('server', {
-      type: EventType.DOWNLOAD,
-      data: {
-        url,
-        type: dataSource
-      }
-    })
-  }
-
-  // 设置桌面
-  const setDesktopHandle = (url: string) => {
-    ipcRenderer.send('server', {
-      type: EventType.SET_DESKTOP,
-      data: {
-        url,
-        type: dataSource
-      }
-    })
-  }
-
-  // ipc 通信监听方法
-  const ipcClientFn = (event: any, msg: any) => {
-    const isSuccess = msg.data.success
-    let snackbarMsg = ''
-    switch (msg.type) {
-      case EventType.PROXY:
-        setList(msg?.data || [])
-        break
-      case EventType.DOWNLOAD:
-      case EventType.SET_DESKTOP:
-        if (msg.type === EventType.DOWNLOAD) {
-          snackbarMsg = isSuccess ? '下载成功。' : '下载失败。'
-        } else {
-          snackbarMsg = isSuccess ? '设置成功。' : '设置失败。'
-        }
-        setDownloadResult({ result: isSuccess, msg: snackbarMsg })
-        setSnackbar(true)
-        break
-    }
-  }
-
-  //  ipc 通信绑定监听事件
-  useEffect(() => {
-    ipcRenderer.on('client', ipcClientFn)
-    return () => {
-      // 解绑事件
-      ipcRenderer.off('client', ipcClientFn)
-    }
-  }, [])
-
   const classes = useStyles()
+
+  // 图片布局列表
   const imgGrids = list && list.map((val: any, index) => (
     <Grid key={index} item xl={3} lg={4} md={6} sm={12}>
       <Card className={classes.card} raised>
@@ -158,20 +156,21 @@ export default function ImageList () {
 
   return (
     <div className={classes.root}>
-      {/* 下载结果提示条 */}
+      {/* 提示框 */}
       <Snackbar
         open={snackbar}
         onClose={snackbarClose}
         autoHideDuration={2000}
         anchorOrigin={{ horizontal: 'center', vertical: 'top' }}
       >
-        <Alert severity={downloadResult.result ? 'success' : 'error'}>
-          {downloadResult.msg}
+        <Alert severity={resultInfo.type}>
+          {resultInfo.content}
         </Alert>
       </Snackbar>
+      {/* 分页组件 */}
       <TablePagination
         classes={{
-          // wallhaven 不可以选择分页条数
+          // wallHaven 不可以选择分页条数
           root: dataSource === 'wallhaven' ? 'pagination-root-select-none' : ''
         }}
         rowsPerPageOptions={[6, 8, 9, 12, 16, 18]}

@@ -1,8 +1,9 @@
-import { app, BrowserWindow, ipcMain } from 'electron'
-import ipcType from './service/ipc-type-service'
+import { app, BrowserWindow } from 'electron'
 import { join } from 'path'
 import { homedir } from 'os'
 import loadConfig from './service/load-config'
+// ipc 请求控制器
+import './controller'
 
 async function createWindow () {
   // 创建浏览器窗口
@@ -27,9 +28,6 @@ async function createWindow () {
     console.log('React dev tools 加载失败')
     console.log(err)
   }
-
-  // 处理页面发送的 ipc 事件
-  ipcMain.on('server', ipcType)
 
   // and load the index.html of the app.
   win.loadURL('http://localhost:3000')
