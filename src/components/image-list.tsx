@@ -38,6 +38,17 @@ const useStyles = makeStyles((theme: Theme) =>
     linearProgress: {
       position: 'absolute',
       width: '100%'
+    },
+    fixed: {
+      zIndex: 1,
+      width: 'calc(100% - 48px)',
+      height: '76px',
+      backgroundColor: theme.palette.background.default,
+      paddingTop: '24px',
+      margin: '0 24px',
+      position: 'fixed',
+      top: '64px',
+      left: 0
     }
   })
 )
@@ -185,7 +196,23 @@ export default function ImageList () {
 
   return (
     <div className={classes.root}>
-      <LinearProgress className={classes.linearProgress} style={{ display: loading ? '' : 'none' }} />
+      <div className={classes.fixed}>
+        <LinearProgress className={classes.linearProgress} style={{ display: loading ? '' : 'none' }} />
+        {/* 分页组件 */}
+        <TablePagination
+          classes={{
+            // wallHaven 不可以选择分页条数
+            root: dataSource === 'wallhaven' ? 'pagination-root-select-none' : ''
+          }}
+          rowsPerPageOptions={[6, 8, 9, 12, 16, 18]}
+          component='div'
+          count={-1}
+          rowsPerPage={rowsPerPage}
+          page={pageNum}
+          onChangePage={handleChangePage}
+          onChangeRowsPerPage={handleChangeRowsPerPage}
+        />
+      </div>
       {/* 提示框 */}
       <Snackbar
         open={snackbar}
@@ -197,21 +224,7 @@ export default function ImageList () {
           {resultInfo.content}
         </Alert>
       </Snackbar>
-      {/* 分页组件 */}
-      <TablePagination
-        classes={{
-          // wallHaven 不可以选择分页条数
-          root: dataSource === 'wallhaven' ? 'pagination-root-select-none' : ''
-        }}
-        rowsPerPageOptions={[6, 8, 9, 12, 16, 18]}
-        component='div'
-        count={-1}
-        rowsPerPage={rowsPerPage}
-        page={pageNum}
-        onChangePage={handleChangePage}
-        onChangeRowsPerPage={handleChangeRowsPerPage}
-      />
-      <Grid container spacing={3}>
+      <Grid container spacing={3} style={{ marginTop: '52px' }}>
         {imgGrids}
       </Grid>
     </div>
