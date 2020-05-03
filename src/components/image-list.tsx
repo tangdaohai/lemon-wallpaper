@@ -225,7 +225,7 @@ export default function ImageList () {
         </Alert>
       </Snackbar>
       <Grid container spacing={3} style={{ marginTop: '52px' }}>
-        {imgGrids}
+        {list.length > 0 ? imgGrids : <Typography>没有可以显示的内容。</Typography>}
       </Grid>
     </div>
   )
