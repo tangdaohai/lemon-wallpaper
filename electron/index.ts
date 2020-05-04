@@ -1,11 +1,28 @@
 import { app, BrowserWindow } from 'electron'
 import { join } from 'path'
-import { homedir } from 'os'
 import loadConfig from './service/load-config'
 // ipc 请求控制器
 import './controller'
 
+// 运行环境
+const isDev = () => {
+  const isEnvSet = 'ELECTRON_IS_DEV' in process.env
+  const getFromEnv = parseInt(process.env.ELECTRON_IS_DEV as string, 10) === 1
+
+  return isEnvSet ? getFromEnv : !app.isPackaged
+}
+
 async function createWindow () {
+  let indexURL = ''
+  if (isDev()) {
+    console.log('开发环境')
+    indexURL = 'http://localhost:3000'
+  } else {
+    console.log('生产环境')
+    // react 编译后的目录
+    indexURL = `file://${join(__dirname, 'build')}/index.html`
+  }
+
   // 创建浏览器窗口
   const win = new BrowserWindow({
     width: 1920,
@@ -18,22 +35,8 @@ async function createWindow () {
   // 加载配置文件
   await loadConfig()
 
-  // @TODO 区分开发环境
-  // 添加 react chrome 开发者插件
-  try {
-    BrowserWindow.addDevToolsExtension(
-      join(homedir(), '/Library/Application Support/Google/Chrome/Profile 1/Extensions/fmkadmapgofadopljbjfkapdkoienihi/4.5.0_0')
-    )
-  } catch (err) {
-    console.log('React dev tools 加载失败')
-    console.log(err)
-  }
-
   // and load the index.html of the app.
-  win.loadURL('http://localhost:3000')
-
-  // 打开开发者工具
-  win.webContents.openDevTools()
+  win.loadURL(indexURL)
 }
 
 // This method will be called when Electron has finished
