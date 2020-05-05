@@ -23,10 +23,11 @@
     "wallpaper": "^4.4.1"
   },
   "main": "dist-electron/index.js",
+  "homepage": "./",
   "scripts": {
     "electron-build": "tsc --resolveJsonModule --outDir dist-electron electron/index.ts",
     "electron-ts-watch": "tsc --resolveJsonModule --watch --outDir dist-electron electron/index.ts",
-    "electron-start": "electron .",
+    "electron-start": "electron . env.ELECTRON_IS_DEV=false",
     "electron-dev-watch": "nodemon --watch ./dist-electron/*.js --exec 'electron .'",
     "start": "react-scripts start",
     "build": "react-scripts build",

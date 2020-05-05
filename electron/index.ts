@@ -18,9 +18,8 @@ async function createWindow () {
     console.log('开发环境')
     indexURL = 'http://localhost:3000'
   } else {
-    console.log('生产环境')
     // react 编译后的目录
-    indexURL = `file://${join(__dirname, 'build')}/index.html`
+    indexURL = `file://${join(__dirname, '../build')}/index.html`
   }
 
   // 创建浏览器窗口
