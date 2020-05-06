@@ -1,18 +1,65 @@
 {
   "name": "lemon-wallpaper",
   "version": "0.1.0",
-  "private": true,
+  "author": {
+    "email": "tangdaohai@outlook.com",
+    "name": "阿Q"
+  },
   "main": "dist-electron/index.js",
   "homepage": "./",
   "scripts": {
     "electron-build": "tsc --resolveJsonModule --outDir dist-electron electron/index.ts",
     "electron-ts-watch": "tsc --resolveJsonModule --watch --outDir dist-electron electron/index.ts",
-    "electron-start": "electron . env.ELECTRON_IS_DEV=false",
+    "electron-start": "electron .",
     "electron-dev-watch": "nodemon --watch ./dist-electron/*.js --exec 'electron .'",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "package-mac": "electron-builder build --mac"
+  },
+  "build": {
+    "appId": "com.tangdaohai.${name}",
+    "productName": "柠檬壁纸",
+    "copyright": "Copyright © 2020 ${author}",
+    "directories": {
+      "buildResources": "resources",
+      "output": "package-dist"
+    },
+    "extends": null,
+    "files": [
+      "build/**/*",
+      "dist-electron/**/*",
+      "node_modules/**/*"
+    ],
+    "dmg": {
+      "contents": [
+        {
+          "x": 130,
+          "y": 220
+        },
+        {
+          "x": 410,
+          "y": 220,
+          "type": "link",
+          "path": "/Applications"
+        }
+      ]
+    },
+    "win": {
+      "target": [
+        "nsis",
+        "msi"
+      ]
+    },
+    "linux": {
+      "target": [
+        "deb",
+        "rpm",
+        "AppImage"
+      ],
+      "category": "Development"
+    }
   },
   "browserslist": {
     "production": [
