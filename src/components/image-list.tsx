@@ -66,7 +66,7 @@ export default function ImageList () {
   // 页码
   const [pageNum, setPageNum] = useState(0)
   // 每页几条
-  const [rowsPerPage, setRowsPerPage] = useState(8)
+  const [rowsPerPage, setRowsPerPage] = useState(12)
 
   useEffect(() => {
     setPageNum(0)
