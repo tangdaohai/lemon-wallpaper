@@ -139,7 +139,7 @@ export default function Header (props: HeaderProps) {
     event.preventDefault()
     event.stopPropagation()
     // 传递搜索内容
-    changeSearchContent(searchParam)
+    changeSearchContent(encodeURIComponent(searchParam))
   }
 
   // wall haven 壁纸分类选项 change
