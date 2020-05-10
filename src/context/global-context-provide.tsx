@@ -8,7 +8,7 @@ interface Props {
 
 export default function GlobalContextProvide (props: Props) {
   const [searchContent, changeSearchContent] = useState('')
-  const [dataSource, changeDataSource] = useState<keyof typeof dataSourceConfig>('unsplash')
+  const [dataSource, changeDataSource] = useState<keyof typeof dataSourceConfig>('biying')
   const [whParams, changeWhParams] = useState({
     categories: [1, 1, 1],
     purity: [1, 1]

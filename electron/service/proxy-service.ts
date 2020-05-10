@@ -8,7 +8,7 @@ function _buildUrl (type: string, params: any): string|Array<string> {
   let url: string|Array<string> = ''
   const startNum = params.pageNum * params.rowsPerPage
   // 默认搜索条件是 natural
-  const queryText = params.query || 'natural'
+  const queryText = params.query || 'night sky'
   switch (type) {
     case 'biying':
       url = []
