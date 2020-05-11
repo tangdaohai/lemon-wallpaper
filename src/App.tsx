@@ -35,17 +35,17 @@ const menusList: Array<MenuItem> = [
     icon: <SearchIcon />
   },
   {
-    key: 'search',
+    key: 'download',
     text: '已下载',
     icon: <FavoriteIcon />
   },
   {
-    key: 'search',
+    key: 'setting',
     text: '设置',
     icon: <SettingIcon />
   },
   {
-    key: 'search',
+    key: 'other',
     text: '说明',
     icon: <CopyrightIcon />
   }
@@ -96,13 +96,22 @@ export default function App () {
   const classes = useStyles()
   const theme = useTheme()
   const [open, setOpen] = useState(false)
+  const [activeItem, setActiveItem] = useState('search')
 
   const handleDrawerClose = () => {
     setOpen(false)
   }
 
   const menuItemClick = (item: MenuItem) => {
-    console.log(item.key)
+    setActiveItem(item.key)
+  }
+
+  // 根据 menu list 动态展示子组件
+  const childrenSwitch = () => {
+    switch (activeItem) {
+      case 'search':
+        return <ImageList />
+    }
   }
 
   return (
@@ -127,8 +136,13 @@ export default function App () {
             </div>
             <Divider />
             <List>
-              {menusList.map((item, index) => (
-                <ListItem button key={item.text} onClick={() => menuItemClick(item)}>
+              {menusList.map(item => (
+                <ListItem
+                  button
+                  key={item.text}
+                  selected={activeItem === item.key}
+                  onClick={() => menuItemClick(item)}
+                >
                   <ListItemIcon>
                     {item.icon}
                   </ListItemIcon>
@@ -143,7 +157,7 @@ export default function App () {
             })}
           >
             <div className={classes.drawerHeader} />
-            <ImageList />
+            {childrenSwitch()}
           </main>
         </GlobalContextProvide>
       </ThemeProvider>
