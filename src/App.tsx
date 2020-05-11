@@ -15,15 +15,39 @@ import {
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft'
 import ChevronRightIcon from '@material-ui/icons/ChevronRight'
 import FavoriteIcon from '@material-ui/icons/Favorite'
+import SearchIcon from '@material-ui/icons/Search'
+import SettingIcon from '@material-ui/icons/Settings'
+import CopyrightIcon from '@material-ui/icons/Copyright'
 
 import ImageList from './components/image-list'
 import Header from './components/header'
 import GlobalContextProvide from './context/global-context-provide'
 const drawerWidth = 240
-const menusList = [
+interface MenuItem {
+  key: string,
+  text: string,
+  icon: React.ReactElement
+}
+const menusList: Array<MenuItem> = [
   {
-    text: '已收藏',
-    icon: FavoriteIcon
+    key: 'search',
+    text: '搜索',
+    icon: <SearchIcon />
+  },
+  {
+    key: 'search',
+    text: '已下载',
+    icon: <FavoriteIcon />
+  },
+  {
+    key: 'search',
+    text: '设置',
+    icon: <SettingIcon />
+  },
+  {
+    key: 'search',
+    text: '说明',
+    icon: <CopyrightIcon />
   }
 ]
 const useStyles = makeStyles((theme: Theme) =>
@@ -77,6 +101,10 @@ export default function App () {
     setOpen(false)
   }
 
+  const menuItemClick = (item: MenuItem) => {
+    console.log(item.key)
+  }
+
   return (
     <div className={classes.root}>
       <ThemeProvider theme={customTheme}>
@@ -100,9 +128,9 @@ export default function App () {
             <Divider />
             <List>
               {menusList.map((item, index) => (
-                <ListItem button key={item.text}>
+                <ListItem button key={item.text} onClick={() => menuItemClick(item)}>
                   <ListItemIcon>
-                    <FavoriteIcon />
+                    {item.icon}
                   </ListItemIcon>
                   <ListItemText primary={item.text} />
                 </ListItem>
