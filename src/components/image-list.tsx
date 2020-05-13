@@ -10,15 +10,15 @@ import {
   Typography,
   IconButton,
   Button,
-  Snackbar,
   TablePagination,
   LinearProgress
 } from '@material-ui/core'
-import MuiAlert, { AlertProps, Color as AlertType } from '@material-ui/lab/Alert'
+import { Color as AlertType } from '@material-ui/lab/Alert'
 import { EventType } from 'lemon-utils'
 import { ArrowDownward } from '@material-ui/icons'
 import GlobalContext from '../context/global-context'
 import ipcRequest from '../util/ipc-request'
+import ShowMessage, { ShowMessageProps } from './show-message'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -53,15 +53,13 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 )
 
-function Alert (props: AlertProps) {
-  return <MuiAlert elevation={6} variant='filled' {...props} />
-}
-
 export default function ImageList () {
   const { searchContent, dataSource, whParams } = useContext(GlobalContext)
   const [loading, setLoading] = useState(false)
-  const [snackbar, setSnackbar] = useState(false)
-  const [resultInfo, setResultInfo] = useState<{type: AlertType, content: string}>({ type: 'success', content: '' })
+  const [message, setMessage] = useState<ShowMessageProps>({
+    content: '',
+    open: false
+  })
   const [list, setList] = useState([])
   // 页码
   const [pageNum, setPageNum] = useState(0)
@@ -84,12 +82,12 @@ export default function ImageList () {
   }
 
   // 显示提示框，对显示内容复制，切换 Snackbar 显示状态
-  const showSnackbar = (content: string, success: AlertType = 'success') => {
-    setResultInfo({
-      type: success,
-      content: content
+  const showMessage = (content: string, type: AlertType) => {
+    setMessage({
+      content,
+      type,
+      open: true
     })
-    setSnackbar(true)
   }
 
   // 图片列表发起请求
@@ -132,9 +130,9 @@ export default function ImageList () {
         type: dataSource
       })
       if (result.success) {
-        showSnackbar('下载成功。', 'success')
+        showMessage('下载成功。', 'success')
       } else {
-        showSnackbar('下载失败。', 'error')
+        showMessage('下载失败。', 'error')
       }
     } catch (err) {
       console.log(err)
@@ -152,9 +150,9 @@ export default function ImageList () {
         type: dataSource
       })
       if (result.success) {
-        showSnackbar('已设置成功。', 'success')
+        showMessage('已设置成功。', 'success')
       } else {
-        showSnackbar('设置失败。', 'error')
+        showMessage('设置失败。', 'error')
       }
     } catch (err) {
       console.log(err)
@@ -163,12 +161,11 @@ export default function ImageList () {
     }
   }
 
-  // 关闭提示框
-  const snackbarClose = (event?: React.SyntheticEvent, reason?: string) => {
-    if (reason === 'clickaway') {
-      return
-    }
-    setSnackbar(false)
+  const messageCloseHandle = () => {
+    setMessage({
+      ...message,
+      open: false
+    })
   }
 
   const classes = useStyles()
@@ -214,16 +211,12 @@ export default function ImageList () {
         />
       </div>
       {/* 提示框 */}
-      <Snackbar
-        open={snackbar}
-        onClose={snackbarClose}
-        autoHideDuration={2000}
-        anchorOrigin={{ horizontal: 'center', vertical: 'top' }}
-      >
-        <Alert severity={resultInfo.type}>
-          {resultInfo.content}
-        </Alert>
-      </Snackbar>
+      <ShowMessage
+        open={message.open}
+        content={message.content}
+        type={message.type}
+        onClose={messageCloseHandle}
+      />
       <Grid container spacing={3} style={{ marginTop: '52px' }}>
         {list.length > 0 ? imgGrids : <Typography>没有可以显示的内容。</Typography>}
       </Grid>
