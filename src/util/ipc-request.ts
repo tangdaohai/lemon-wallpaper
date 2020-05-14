@@ -25,7 +25,7 @@ ipcRenderer.on('from-server', (event, params: ReceivedParams) => {
  * 向 electron 服务端发送 ipc 通信，可以通过 async/await 方式获得服务端返回的结果
  * @param params
  */
-export default function request (type: string, data: any): Promise<any> {
+export default function request (type: string, data?: any): Promise<any> {
   // @FIXME 生成机制有待优化
   // 生成唯一标识
   const currentSymbol = Date.now() + ''
