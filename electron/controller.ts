@@ -3,6 +3,7 @@ import wallpaper from 'wallpaper'
 import { use } from './util/ipc-server'
 import Proxy from './service/proxy-service'
 import Download from './service/download-service'
+import * as Directory from './service/directory-service'
 
 function _success (content?: any) {
   return {
@@ -48,4 +49,16 @@ use(EventType.SET_DESKTOP, async (ctx, data) => {
     console.log(e)
     ctx.reply(_error('设置失败'))
   }
+})
+
+// 选择目录
+use('select-dir', async (ctx) => {
+  const result = await Directory.selectDir()
+  ctx.reply(_success(result))
+})
+
+// 获取当前下载存放的目录
+use('get-download-path', async ctx => {
+  const result = await Directory.getDownloadDir()
+  ctx.reply(_success(result))
 })
