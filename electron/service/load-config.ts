@@ -13,6 +13,7 @@ const userDataPath = app.getPath('userData')
 export default async function () {
   const configPath = join(userDataPath, 'config.json')
   let lemonConfig: LemonConfig = { downLoadPath: '' }
+  let isWriteConfig: boolean = false
   // 1. 读取文件
   try {
     const result = await fsPromises.readFile(configPath, 'utf8')
@@ -25,9 +26,9 @@ export default async function () {
     configTemplate.downLoadPath = join(app.getPath('pictures'), 'lemon-wallpaper')
     if (err.code === 'ENOENT') {
       console.log('不存在，立刻生成')
-      fsPromises.writeFile(configPath, JSON.stringify(configTemplate), 'utf8')
+      isWriteConfig = true
     }
   }
   // 设置 config
-  setConfig(lemonConfig)
+  setConfig(lemonConfig, isWriteConfig)
 }
