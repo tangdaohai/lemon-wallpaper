@@ -208,6 +208,7 @@ export default function Header (props: HeaderProps) {
                 key={index}
                 control={
                   <Checkbox
+                    size='small'
                     checked={!!val}
                     onChange={_ => whCategoriesChangeHandle(index)}
                   />
@@ -228,6 +229,7 @@ export default function Header (props: HeaderProps) {
                         key={index}
                         control={
                           <Checkbox
+                            size='small'
                             checked={!!val}
                             onChange={_ => whPurityChangeHandle(index)}
                           />
