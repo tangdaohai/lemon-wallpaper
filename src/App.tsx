@@ -19,9 +19,10 @@ import SearchIcon from '@material-ui/icons/Search'
 import SettingIcon from '@material-ui/icons/Settings'
 import CopyrightIcon from '@material-ui/icons/Copyright'
 
-import ImageList from './components/image-list'
 import Header from './components/header'
 import GlobalContextProvide from './context/global-context-provide'
+import ImageList from './components/image-list'
+import Setting from './components/setting'
 const drawerWidth = 240
 interface MenuItem {
   key: string,
@@ -111,6 +112,8 @@ export default function App () {
     switch (activeItem) {
       case 'search':
         return <ImageList />
+      case 'setting':
+        return <Setting />
     }
   }
 
