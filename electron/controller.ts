@@ -62,3 +62,17 @@ use('get-download-path', async ctx => {
   const result = await Directory.getDownloadDir()
   ctx.reply(_success(result))
 })
+
+// 写入配置文件
+use('set-download-path', async (ctx, data) => {
+  try {
+    await Directory.setDownloadDir(data.path, data.oldPath)
+    ctx.reply(_success())
+  } catch (err) {
+    if (err.code === 'EACCES') {
+      ctx.reply(_error('新的目录没有写入的权限'))
+    } else {
+      ctx.reply(_error('设置失败...'))
+    }
+  }
+})
