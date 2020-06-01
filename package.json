@@ -1,4 +1,5 @@
 {
+  "private": true,
   "name": "lemon-wallpaper",
   "version": "0.1.0",
   "author": {
@@ -78,6 +79,7 @@
     "@material-ui/icons": "^4.9.1",
     "@material-ui/lab": "^4.0.0-alpha.45",
     "cheerio": "^1.0.0-rc.3",
+    "electron-happy-ipc": "^1.0.0-beta",
     "lemon-utils": "^0.0.1",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",

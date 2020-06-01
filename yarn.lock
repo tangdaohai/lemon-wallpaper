@@ -3774,6 +3774,10 @@ electron-builder@^22.6.0:
     update-notifier "^4.1.0"
     yargs "^15.3.1"
 
+electron-happy-ipc@^1.0.0-beta:
+  version "1.0.0-beta"
+  resolved "https://registry.npmjs.org/electron-happy-ipc/-/electron-happy-ipc-1.0.0-beta.tgz#34c01aabbb22d1dd17931e6fd1f2fc723f027efa"
+
 electron-publish@22.6.0:
   version "22.6.0"
   resolved "https://registry.yarnpkg.com/electron-publish/-/electron-publish-22.6.0.tgz#11dca595cfe3c0fdbc364c28dbb8838a1c6ec799"
