@@ -10,7 +10,7 @@ import {
   Checkbox
 } from '@material-ui/core'
 import Layout from './normal-layout'
-import ipcRequest from '../util/ipc-request'
+import ipcRequest from 'electron-happy-ipc/request'
 import { Color as AlertType } from '@material-ui/lab/Alert'
 import ShowMessage, { ShowMessageProps } from './show-message'
 const { shell } = window.require('electron')

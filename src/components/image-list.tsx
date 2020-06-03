@@ -17,7 +17,7 @@ import { Color as AlertType } from '@material-ui/lab/Alert'
 import { EventType } from 'lemon-utils'
 import { ArrowDownward } from '@material-ui/icons'
 import GlobalContext from '../context/global-context'
-import ipcRequest from '../util/ipc-request'
+import ipcRequest from 'electron-happy-ipc/request'
 import ShowMessage, { ShowMessageProps } from './show-message'
 
 const useStyles = makeStyles((theme: Theme) =>

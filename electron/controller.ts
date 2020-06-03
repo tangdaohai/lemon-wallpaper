@@ -1,6 +1,6 @@
 import { EventType } from 'lemon-utils'
 import wallpaper from 'wallpaper'
-import { use } from './util/ipc-server'
+import server from 'electron-happy-ipc/server'
 import Proxy from './service/proxy-service'
 import Download from './service/download-service'
 import * as Directory from './service/directory-service'
@@ -24,13 +24,13 @@ function _format (isSuccess: boolean, content?: any) {
 }
 
 // proxy
-use(EventType.PROXY, async (ctx, data) => {
+server.use(EventType.PROXY, async (ctx, data) => {
   const result = await Proxy(data.type, data.params)
   ctx.reply(_success(result))
 })
 
 // 下载图片
-use(EventType.DOWNLOAD, async (ctx, data) => {
+server.use(EventType.DOWNLOAD, async (ctx, data) => {
   try {
     const result = await Download(data.type, data.url)
     ctx.reply(_success(result))
@@ -40,7 +40,7 @@ use(EventType.DOWNLOAD, async (ctx, data) => {
 })
 
 // 设置为桌面
-use(EventType.SET_DESKTOP, async (ctx, data) => {
+server.use(EventType.SET_DESKTOP, async (ctx, data) => {
   try {
     const result = await Download(data.type, data.url)
     await wallpaper.set(result.saveImgName)
@@ -52,19 +52,19 @@ use(EventType.SET_DESKTOP, async (ctx, data) => {
 })
 
 // 选择目录
-use('select-dir', async (ctx) => {
+server.use('select-dir', async (ctx) => {
   const result = await Directory.selectDir()
   ctx.reply(_success(result))
 })
 
 // 获取当前下载存放的目录
-use('get-download-path', async ctx => {
+server.use('get-download-path', async ctx => {
   const result = await Directory.getDownloadDir()
   ctx.reply(_success(result))
 })
 
 // 写入配置文件
-use('set-download-path', async (ctx, data) => {
+server.use('set-download-path', async (ctx, data) => {
   try {
     await Directory.setDownloadDir(data.path, data.oldPath)
     ctx.reply(_success())
