@@ -4,6 +4,7 @@ import server from 'electron-happy-ipc/server'
 import Proxy from './service/proxy-service'
 import Download from './service/download-service'
 import * as Directory from './service/directory-service'
+import * as Local from './service/local-service'
 
 function _success (content?: any) {
   return {
@@ -74,5 +75,24 @@ server.use('set-download-path', async (ctx, data) => {
     } else {
       ctx.reply(_error('设置失败...'))
     }
+  }
+})
+// 获取本地图片
+server.use('get-local-img', async ctx => {
+  try {
+    const result = await Local.getLocalList()
+    ctx.reply(_success(result))
+  } catch (err) {
+    ctx.reply(_error('获取本地图片失败。'))
+  }
+})
+
+server.use('set-local-img-desktop', async (ctx, data) => {
+  try {
+    await wallpaper.set(data.url)
+    ctx.reply(_format(data.url === await wallpaper.get()))
+  } catch (e) {
+    console.log(e)
+    ctx.reply(_error('设置失败'))
   }
 })

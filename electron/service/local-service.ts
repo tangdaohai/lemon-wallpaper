@@ -4,9 +4,10 @@ import { promises as fs } from 'fs'
 import { getDownloadDir } from './directory-service'
 
 interface LocalImag {
-  name: string,
-  time: number,
-  size: number
+  url: string,
+  downloadUrl: string,
+  time: string,
+  size: string
 }
 
 export async function getLocalList () {
@@ -15,13 +16,14 @@ export async function getLocalList () {
 
   const dir = await fs.opendir(path)
   for await (const dirent of dir) {
-    if (dirent.isFile()) {
-      const name = dirent.name
-      const stat = await fs.stat(path + '/' + name)
+    if (dirent.isFile() && /\.(jpg|png)$/i.test(dirent.name)) {
+      const imgPath = path + '/' + dirent.name
+      const stat = await fs.stat(imgPath)
       result.push({
-        name,
-        time: stat.ctimeMs,
-        size: stat.size
+        url: 'file://' + imgPath,
+        downloadUrl: imgPath,
+        time: new Date(stat.mtimeMs).toLocaleString(),
+        size: stat.size / 1024 + 'KB'
       })
     }
   }
