@@ -22,6 +22,7 @@ import CopyrightIcon from '@material-ui/icons/Copyright'
 import Header from './components/header'
 import GlobalContextProvide from './context/global-context-provide'
 import ImageList from './components/image-list'
+import LocalList from './components/local-list'
 import Setting from './components/setting'
 const drawerWidth = 240
 interface MenuItem {
@@ -36,7 +37,7 @@ const menusList: Array<MenuItem> = [
     icon: <SearchIcon />
   },
   {
-    key: 'download',
+    key: 'local-list',
     text: '已下载',
     icon: <FavoriteIcon />
   },
@@ -97,7 +98,7 @@ export default function App () {
   const classes = useStyles()
   const theme = useTheme()
   const [open, setOpen] = useState(false)
-  const [activeItem, setActiveItem] = useState('search')
+  const [activeItem, setActiveItem] = useState('local-list')
 
   const handleDrawerClose = () => {
     setOpen(false)
@@ -114,6 +115,8 @@ export default function App () {
         return <ImageList />
       case 'setting':
         return <Setting />
+      case 'local-list':
+        return <LocalList />
     }
   }
 
