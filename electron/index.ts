@@ -14,9 +14,15 @@ const isDev = () => {
 
 async function createWindow () {
   let indexURL = ''
-  if (isDev()) {
+  const development = !!isDev()
+  if (development) {
     console.log('开发环境')
     indexURL = 'http://localhost:3000'
+    try {
+      BrowserWindow.addDevToolsExtension(join(__dirname, '../chrome-dev-tools/react-tools'))
+    } catch (err) {
+      console.warn('chrome-dev-tools/react-tools 加载失败')
+    }
   } else {
     // react 编译后的目录
     indexURL = `file://${join(__dirname, '../build')}/index.html`
@@ -27,7 +33,9 @@ async function createWindow () {
     width: 1920,
     height: 1080,
     webPreferences: {
-      nodeIntegration: true
+      nodeIntegration: true,
+      // 开发模式下 关闭 同源策略限制，生产环境 都是 file:// 没有限制
+      webSecurity: !development
     }
   })
 
