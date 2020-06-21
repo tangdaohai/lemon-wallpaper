@@ -19,7 +19,6 @@ export default function LocalList () {
 
   // 当前分页发生了变化
   const pageChange = (num: number) => {
-    console.log('当前查询: ', num)
     const startNumber = num * rowsPerPage
     setShowList(list.slice(startNumber, startNumber + rowsPerPage))
   }
@@ -39,6 +38,7 @@ export default function LocalList () {
       <ImageList
         list={showList}
         isLocal
+        total={list.length}
         rowsPerPage={rowsPerPage}
         onPerPageChange={rowsPerPageChange}
         onPageChange={pageChange}

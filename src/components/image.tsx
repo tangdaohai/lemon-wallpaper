@@ -54,6 +54,7 @@ const useStyles = makeStyles((theme: Theme) =>
 )
 interface ImageListProps {
   list: Array<any>,
+  total?: number,
   rowsPerPage: number,
   onPageChange?: (num: number) => void,
   onPerPageChange?: (num: number) => void,
@@ -186,11 +187,11 @@ export default function ImageList (props: ImageListProps) {
         <TablePagination
           classes={{
             // wallHaven 不可以选择分页条数
-            root: dataSource === 'wallhaven' ? 'pagination-root-select-none' : ''
+            root: (!props.isLocal && dataSource === 'wallhaven') ? 'pagination-root-select-none' : ''
           }}
           rowsPerPageOptions={[6, 8, 9, 12, 16, 18]}
           component='div'
-          count={-1}
+          count={props.total || -1}
           rowsPerPage={props.rowsPerPage}
           page={pageNum}
           onChangePage={handleChangePage}
