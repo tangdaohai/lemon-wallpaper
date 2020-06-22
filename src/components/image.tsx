@@ -58,6 +58,7 @@ interface ImageListProps {
   rowsPerPage: number,
   onPageChange?: (num: number) => void,
   onPerPageChange?: (num: number) => void,
+  onDelete?: (downloadUrl: string) => void,
   isLocal?: boolean
 }
 export default function ImageList (props: ImageListProps) {
@@ -138,6 +139,19 @@ export default function ImageList (props: ImageListProps) {
     }
   }
 
+  const deleteLocalImg = async (url: string) => {
+    setLoading(true)
+    const result = await ipcRequest('delete-local-img', { path: url })
+    setLoading(false)
+    if (result.success) {
+      showMessage('删除成功。', 'success')
+      setPageNum(0)
+      props.onDelete && props.onDelete(url)
+    } else {
+      showMessage('删除失败。', 'error')
+    }
+  }
+
   const messageCloseHandle = () => {
     setMessage({
       ...message,
@@ -169,7 +183,7 @@ export default function ImageList (props: ImageListProps) {
           }
           {
             props.isLocal &&
-              <Button color='secondary' aria-label='删除'>
+              <Button color='secondary' aria-label='删除' onClick={() => deleteLocalImg(val.downloadUrl)}>
                 <DeleteIcon /> 删除
               </Button>
           }
@@ -206,7 +220,7 @@ export default function ImageList (props: ImageListProps) {
         onClose={messageCloseHandle}
       />
       <Grid container spacing={3} style={{ marginTop: '52px' }}>
-        {list.length > 0 ? imgGrids : <Grid alignContent='center'><Typography>没有可以显示的内容。</Typography></Grid>}
+        {list.length > 0 ? imgGrids : <Grid container alignContent='center'><Typography>没有可以显示的内容。</Typography></Grid>}
       </Grid>
     </div>
   )

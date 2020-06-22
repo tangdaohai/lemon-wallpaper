@@ -23,6 +23,12 @@ export default function LocalList () {
     setShowList(list.slice(startNumber, startNumber + rowsPerPage))
   }
 
+  // 删除本地图片，删除后 显示第一页
+  const deleteImgHandle = (downloadUrl: string) => {
+    setList(list.filter(val => val.downloadUrl !== downloadUrl))
+    setShowList(list.slice(0, rowsPerPage))
+  }
+
   const init = async () => {
     const result = await request('get-local-img')
     if (result.success) {
@@ -42,6 +48,7 @@ export default function LocalList () {
         rowsPerPage={rowsPerPage}
         onPerPageChange={rowsPerPageChange}
         onPageChange={pageChange}
+        onDelete={deleteImgHandle}
       />
     </div>
   )
