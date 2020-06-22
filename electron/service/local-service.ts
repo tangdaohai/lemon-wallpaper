@@ -30,3 +30,7 @@ export async function getLocalList () {
 
   return result
 }
+
+export function deleteLocalImg (path: string) {
+  return fs.unlink(path)
+}

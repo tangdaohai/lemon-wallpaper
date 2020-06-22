@@ -96,3 +96,13 @@ server.use('set-local-img-desktop', async (ctx, data) => {
     ctx.reply(_error('设置失败'))
   }
 })
+
+server.use('delete-local-img', async (ctx, data) => {
+  try {
+    await Local.deleteLocalImg(data.path as string)
+    ctx.reply(_success('删除成功。'))
+  } catch (e) {
+    console.log(e)
+    ctx.reply(_error('删除失败。'))
+  }
+})
