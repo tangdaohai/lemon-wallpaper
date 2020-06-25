@@ -24,9 +24,10 @@ export default function LocalList () {
   }
 
   // 删除本地图片，删除后 显示第一页
-  const deleteImgHandle = (downloadUrl: string) => {
-    setList(list.filter(val => val.downloadUrl !== downloadUrl))
-    setShowList(list.slice(0, rowsPerPage))
+  const deleteImgHandle = async (downloadUrl: string) => {
+    const filterList = list.filter(val => val.downloadUrl !== downloadUrl)
+    setShowList(filterList.slice(0, rowsPerPage))
+    await setList(filterList)
   }
 
   const init = async () => {
