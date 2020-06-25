@@ -11,7 +11,8 @@ import {
   IconButton,
   Button,
   TablePagination,
-  LinearProgress
+  LinearProgress,
+  Popover
 } from '@material-ui/core'
 import { Color as AlertType } from '@material-ui/lab/Alert'
 import { EventType } from 'lemon-utils'
@@ -61,9 +62,14 @@ interface ImageListProps {
   onDelete?: (downloadUrl: string) => void,
   isLocal?: boolean
 }
+
+// 存放要被删除图片的地址
+let deleteUrl = ''
+
 export default function ImageList (props: ImageListProps) {
   const { dataSource } = useContext(GlobalContext)
   const [loading, setLoading] = useState(false)
+  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null)
   const [message, setMessage] = useState<ShowMessageProps>({
     content: '',
     open: false
@@ -71,6 +77,9 @@ export default function ImageList (props: ImageListProps) {
 
   // 页码
   const [pageNum, setPageNum] = useState(0)
+
+  const open = Boolean(anchorEl)
+  const id = open ? 'simple-popover' : undefined
 
   const { list } = props
 
@@ -139,17 +148,27 @@ export default function ImageList (props: ImageListProps) {
     }
   }
 
-  const deleteLocalImg = async (url: string) => {
+  const deleteLocalImg = async () => {
     setLoading(true)
-    const result = await ipcRequest('delete-local-img', { path: url })
+    const result = await ipcRequest('delete-local-img', { path: deleteUrl })
     setLoading(false)
     if (result.success) {
+      switchPopover(null)
       showMessage('删除成功。', 'success')
       setPageNum(0)
-      props.onDelete && props.onDelete(url)
+      props.onDelete && props.onDelete(deleteUrl)
     } else {
       showMessage('删除失败。', 'error')
     }
+  }
+
+  function switchPopover (event: null): void
+  function switchPopover (event: React.MouseEvent<HTMLButtonElement>, url: string): void
+  function switchPopover (event: React.MouseEvent<HTMLButtonElement> | null, url?: string) {
+    if (event && url) {
+      deleteUrl = url
+    }
+    setAnchorEl(event ? event.currentTarget : null)
   }
 
   const messageCloseHandle = () => {
@@ -183,7 +202,7 @@ export default function ImageList (props: ImageListProps) {
           }
           {
             props.isLocal &&
-              <Button color='secondary' aria-label='删除' onClick={() => deleteLocalImg(val.downloadUrl)}>
+              <Button color='secondary' aria-label='删除' onClick={event => switchPopover(event, val.downloadUrl)}>
                 <DeleteIcon /> 删除
               </Button>
           }
@@ -193,9 +212,45 @@ export default function ImageList (props: ImageListProps) {
     </Grid>
   ))
 
+  const popoverCard = (
+    <Popover
+      id={id}
+      open={open}
+      anchorEl={anchorEl}
+      onClose={() => { switchPopover(null) }}
+      anchorOrigin={{
+        vertical: 'top',
+        horizontal: 'center'
+      }}
+      transformOrigin={{
+        vertical: 'bottom',
+        horizontal: 'center'
+      }}
+    >
+      <Card>
+        <CardContent>
+          <Typography variant='h6' component='h5'>确认删除吗？</Typography>
+          <Typography variant='body2' component='p' color='textSecondary'>删除无法找回只能重新下载</Typography>
+        </CardContent>
+        <CardActions>
+          <Button size='small' onClick={deleteLocalImg}>确认</Button>
+          <Button
+            size='small'
+            color='primary'
+            variant='contained'
+            onClick={() => { switchPopover(null) }}
+          >
+            取消
+          </Button>
+        </CardActions>
+      </Card>
+    </Popover>
+  )
+
   return (
     <div className={classes.root}>
       <div className={classes.fixed}>
+        {props.isLocal && popoverCard}
         <LinearProgress className={classes.linearProgress} style={{ display: loading ? '' : 'none' }} />
         {/* 分页组件 */}
         <TablePagination
