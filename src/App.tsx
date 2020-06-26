@@ -98,7 +98,7 @@ export default function App () {
   const classes = useStyles()
   const theme = useTheme()
   const [open, setOpen] = useState(false)
-  const [activeItem, setActiveItem] = useState('local-list')
+  const [activeItem, setActiveItem] = useState('search')
 
   const handleDrawerClose = () => {
     setOpen(false)
