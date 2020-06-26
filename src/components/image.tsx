@@ -275,7 +275,7 @@ export default function ImageList (props: ImageListProps) {
         onClose={messageCloseHandle}
       />
       <Grid container spacing={3} style={{ marginTop: '52px' }}>
-        {list.length > 0 ? imgGrids : <Grid container alignContent='center'><Typography>没有可以显示的内容。</Typography></Grid>}
+        {list.length > 0 ? imgGrids : <Grid container justify='center' alignContent='center'><Typography>没有可以显示的内容。</Typography></Grid>}
       </Grid>
     </div>
   )
