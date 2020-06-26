@@ -1,65 +1,11 @@
 import React, { useContext, useState, useEffect } from 'react'
-import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
-import {
-  Grid,
-  Card,
-  CardMedia,
-  CardActionArea,
-  CardContent,
-  CardActions,
-  Typography,
-  IconButton,
-  Button,
-  TablePagination,
-  LinearProgress
-} from '@material-ui/core'
-import { Color as AlertType } from '@material-ui/lab/Alert'
 import { EventType } from 'lemon-utils'
-import { ArrowDownward } from '@material-ui/icons'
 import GlobalContext from '../context/global-context'
 import ipcRequest from 'electron-happy-ipc/request'
-import ShowMessage, { ShowMessageProps } from './show-message'
+import ImageList from './image'
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    root: {
-      flexGrow: 1
-    },
-    card: {
-      width: '100%',
-      borderRadius: 0
-    },
-    cardMedia: {
-      height: 0,
-      paddingTop: '56.25%',
-      backgroundSize: 'contain'
-    },
-    // 进度条
-    linearProgress: {
-      position: 'absolute',
-      width: '100%'
-    },
-    fixed: {
-      zIndex: 1,
-      width: 'calc(100% - 48px)',
-      height: '76px',
-      backgroundColor: theme.palette.background.default,
-      paddingTop: '24px',
-      margin: '0 24px',
-      position: 'fixed',
-      top: '64px',
-      left: 0
-    }
-  })
-)
-
-export default function ImageList () {
+export default function Image () {
   const { searchContent, dataSource, whParams } = useContext(GlobalContext)
-  const [loading, setLoading] = useState(false)
-  const [message, setMessage] = useState<ShowMessageProps>({
-    content: '',
-    open: false
-  })
   const [list, setList] = useState([])
   // 页码
   const [pageNum, setPageNum] = useState(0)
@@ -71,28 +17,19 @@ export default function ImageList () {
   }, [dataSource, searchContent])
 
   // 分页事件
-  const handleChangePage = (event: unknown, newPage: number) => {
+  const pageChangeHandle = (newPage: number) => {
     setPageNum(newPage)
   }
 
   // 每页显示数量变化
-  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setRowsPerPage(parseInt(event.target.value, 10))
+  const rowsPerPageChangeHandle = (num: number) => {
+    setRowsPerPage(num)
     setPageNum(0)
-  }
-
-  // 显示提示框，对显示内容复制，切换 Snackbar 显示状态
-  const showMessage = (content: string, type: AlertType) => {
-    setMessage({
-      content,
-      type,
-      open: true
-    })
   }
 
   // 图片列表发起请求
   const listRequest = async (data: any) => {
-    setLoading(true)
+    // setLoading(true)
     try {
       const result = await ipcRequest(EventType.PROXY, data)
       if (result.success) {
@@ -101,7 +38,7 @@ export default function ImageList () {
         // 提示
       }
     } finally {
-      setLoading(false)
+      // setLoading(false)
     }
   }
 
@@ -121,105 +58,12 @@ export default function ImageList () {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dataSource, searchContent, pageNum, rowsPerPage, whParams])
 
-  // 下载图片
-  const downLoadImg = async (url: string) => {
-    setLoading(true)
-    try {
-      const result = await ipcRequest(EventType.DOWNLOAD, {
-        url,
-        type: dataSource
-      })
-      if (result.success) {
-        showMessage('下载成功。', 'success')
-      } else {
-        showMessage('下载失败。', 'error')
-      }
-    } catch (err) {
-      console.log(err)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  // 设置桌面
-  const setDesktopHandle = async (url: string) => {
-    setLoading(true)
-    try {
-      const result = await ipcRequest(EventType.SET_DESKTOP, {
-        url,
-        type: dataSource
-      })
-      if (result.success) {
-        showMessage('已设置成功。', 'success')
-      } else {
-        showMessage('设置失败。', 'error')
-      }
-    } catch (err) {
-      console.log(err)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const messageCloseHandle = () => {
-    setMessage({
-      ...message,
-      open: false
-    })
-  }
-
-  const classes = useStyles()
-
-  // 图片布局列表
-  const imgGrids = list && list.map((val: any, index) => (
-    <Grid key={index} item xl={3} lg={4} md={6} sm={12}>
-      <Card className={classes.card} raised>
-        <CardActionArea>
-          <CardMedia className={classes.cardMedia} image={val.url} title='Lemon wallpaper' />
-        </CardActionArea>
-        <CardContent>
-          {val.time && <Typography variant='body2' color='textSecondary' component='p'>{val.time}</Typography>}
-          <Typography variant='body2' color='textSecondary' component='p'>分辨率: {val.resolution}</Typography>
-        </CardContent>
-        <CardActions>
-          <IconButton aria-label='下载图片' onClick={() => downLoadImg(val.downloadUrl)}>
-            <ArrowDownward />
-          </IconButton>
-          <Button variant='contained' color='primary' onClick={() => setDesktopHandle(val.downloadUrl)}>设置桌面</Button>
-        </CardActions>
-      </Card>
-    </Grid>
-  ))
-
   return (
-    <div className={classes.root}>
-      <div className={classes.fixed}>
-        <LinearProgress className={classes.linearProgress} style={{ display: loading ? '' : 'none' }} />
-        {/* 分页组件 */}
-        <TablePagination
-          classes={{
-            // wallHaven 不可以选择分页条数
-            root: dataSource === 'wallhaven' ? 'pagination-root-select-none' : ''
-          }}
-          rowsPerPageOptions={[6, 8, 9, 12, 16, 18]}
-          component='div'
-          count={-1}
-          rowsPerPage={rowsPerPage}
-          page={pageNum}
-          onChangePage={handleChangePage}
-          onChangeRowsPerPage={handleChangeRowsPerPage}
-        />
-      </div>
-      {/* 提示框 */}
-      <ShowMessage
-        open={message.open}
-        content={message.content}
-        type={message.type}
-        onClose={messageCloseHandle}
-      />
-      <Grid container spacing={3} style={{ marginTop: '52px' }}>
-        {list.length > 0 ? imgGrids : <Typography>没有可以显示的内容。</Typography>}
-      </Grid>
-    </div>
+    <ImageList
+      list={list}
+      rowsPerPage={rowsPerPage}
+      onPerPageChange={rowsPerPageChangeHandle}
+      onPageChange={pageChangeHandle}
+    />
   )
 }
