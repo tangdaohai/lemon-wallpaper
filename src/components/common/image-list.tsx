@@ -50,6 +50,10 @@ const useStyles = makeStyles((theme: Theme) =>
       position: 'fixed',
       top: '64px',
       left: 0
+    },
+    noData: {
+      lineHeight: '60px',
+      marginTop: '8px'
     }
   })
 )
@@ -275,7 +279,11 @@ export default function ImageList (props: ImageListProps) {
         onClose={messageCloseHandle}
       />
       <Grid container spacing={3} style={{ marginTop: '52px' }}>
-        {list.length > 0 ? imgGrids : <Grid container justify='center' alignContent='center'><Typography>没有可以显示的内容。</Typography></Grid>}
+        {
+          list.length > 0
+            ? imgGrids
+            : <Grid className={classes.noData} container justify='center' alignContent='center'><Typography>没有可以显示的内容。</Typography></Grid>
+        }
       </Grid>
     </div>
   )
