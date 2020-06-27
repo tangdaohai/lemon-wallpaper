@@ -2,9 +2,9 @@ import React, { useContext, useState, useEffect } from 'react'
 import { EventType } from 'lemon-utils'
 import GlobalContext from '../context/global-context'
 import ipcRequest from 'electron-happy-ipc/request'
-import ImageList from './image'
+import ImageList from './common/image-list'
 
-export default function Image () {
+export default function Search () {
   const { searchContent, dataSource, whParams } = useContext(GlobalContext)
   const [list, setList] = useState([])
   // 页码

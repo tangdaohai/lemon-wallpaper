@@ -21,7 +21,7 @@ import CopyrightIcon from '@material-ui/icons/Copyright'
 
 import Header from './components/header'
 import GlobalContextProvide from './context/global-context-provide'
-import ImageList from './components/image-list'
+import ImageList from './components/search'
 import LocalList from './components/local-list'
 import Setting from './components/setting'
 const drawerWidth = 240

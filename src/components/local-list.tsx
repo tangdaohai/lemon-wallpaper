@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import request from 'electron-happy-ipc/request'
-import ImageList from './image'
+import ImageList from './common/image-list'
 
 export default function LocalList () {
   const [list, setList] = useState<Array<any>>([])
