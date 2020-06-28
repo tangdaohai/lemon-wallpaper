@@ -21,9 +21,10 @@ import CopyrightIcon from '@material-ui/icons/Copyright'
 
 import Header from './components/header'
 import GlobalContextProvide from './context/global-context-provide'
-import ImageList from './components/search'
+import Search from './components/search'
 import LocalList from './components/local-list'
 import Setting from './components/setting'
+import License from './components/license'
 const drawerWidth = 240
 interface MenuItem {
   key: string,
@@ -47,7 +48,7 @@ const menusList: Array<MenuItem> = [
     icon: <SettingIcon />
   },
   {
-    key: 'other',
+    key: 'license',
     text: '说明',
     icon: <CopyrightIcon />
   }
@@ -112,11 +113,13 @@ export default function App () {
   const childrenSwitch = () => {
     switch (activeItem) {
       case 'search':
-        return <ImageList />
+        return <Search />
       case 'setting':
         return <Setting />
       case 'local-list':
         return <LocalList />
+      case 'license':
+        return <License />
     }
   }
 
