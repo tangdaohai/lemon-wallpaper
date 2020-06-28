@@ -12,7 +12,7 @@ import {
 import Layout from './normal-layout'
 import ipcRequest from 'electron-happy-ipc/request'
 import { Color as AlertType } from '@material-ui/lab/Alert'
-import ShowMessage, { ShowMessageProps } from './show-message'
+import ShowMessage, { ShowMessageProps } from './common/show-message'
 const { shell } = window.require('electron')
 
 export default function Setting () {
