@@ -2,11 +2,17 @@ import React from 'react'
 import {
   Card,
   CardContent,
-  Typography
+  Typography,
+  Link
 } from '@material-ui/core'
 import Layout from './normal-layout'
 
+const { shell } = window.require('electron')
+
 export default function License () {
+  const openUrl = (url: string) => {
+    shell.openExternal(url)
+  }
   return (
     <Layout>
       <Typography variant='h4' component='h1'>柠檬壁纸 相关说明</Typography>
@@ -53,7 +59,20 @@ export default function License () {
           </Typography>
           <br />
           <Typography variant='subtitle1' gutterBottom>
-            感谢您能提出宝贵的建议、意见或者相关 Bug，可以在 GitHub issue 中进行说明，如果您不是 GitHub 用户，也可以发送邮件给我：tangdaohai@outlook.com
+            <div>感谢您能提出宝贵的建议、意见或者相关 Bug。</div>
+            <div>
+              您可以在
+              <Link
+                component='button'
+                variant='subtitle1'
+                color='secondary'
+                onClick={() => { openUrl('https://github.com/tangdaohai/lemon-wallpaper/issues') }}
+              >
+                GitHub issue
+              </Link>
+              中进行说明。
+            </div>
+            <div>如果您不是 GitHub 用户，也可以发送邮件给我：tangdaohai@outlook.com</div>
           </Typography>
         </CardContent>
       </Card>
