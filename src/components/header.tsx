@@ -22,6 +22,8 @@ import Brightness7Icon from '@material-ui/icons/Brightness7'
 import dataSourceConfig from '../data-source-config'
 import GlobalContext from '../context/global-context'
 
+const { shell } = window.require('electron')
+
 const drawerWidth = 240
 const CategoriesLabel = ['一般', '动漫', '人物']
 const PurityLabel = ['SFW', 'Sketchy']
@@ -243,7 +245,7 @@ export default function Header (props: HeaderProps) {
             </Tooltip>
         }
         <Tooltip title='访问 Github'>
-          <IconButton>
+          <IconButton onClick={() => { shell.openExternal('https://github.com/tangdaohai/lemon-wallpaper') }}>
             <GitHubIcon />
           </IconButton>
         </Tooltip>
