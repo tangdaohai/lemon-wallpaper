@@ -67,6 +67,24 @@ interface ImageListProps {
   isLocal?: boolean
 }
 
+/**
+ * @FIXME 滚动动画算法需要优化
+ * 设置 scrollTop 属性
+ * @param doc HTMLHtmlElement
+ * @param step number 每次滚动高度 默认 20px
+ */
+const scrollTop = (doc: HTMLHtmlElement, step: number = 20) => {
+  doc.scrollTop -= step
+  if (doc.scrollTop > 0) {
+    const timer = setInterval(() => {
+      doc.scrollTop -= step
+      if (doc.scrollTop <= 0) {
+        clearInterval(timer)
+      }
+    }, 0)
+  }
+}
+
 // 存放要被删除图片的地址
 let deleteUrl = ''
 
@@ -90,6 +108,10 @@ export default function ImageList (props: ImageListProps) {
   useEffect(() => {
     setPageNum(0)
   }, [dataSource])
+
+  useEffect(() => {
+    scrollTop(document.querySelector('html')!)
+  }, [props.list])
 
   // 分页事件
   const handleChangePage = (event: unknown, newPage: number) => {
