@@ -10,7 +10,7 @@
   "homepage": "./",
   "scripts": {
     "electron-build": "tsc --resolveJsonModule --outDir dist-electron electron/index.ts",
-    "electron-ts-watch": "tsc --resolveJsonModule --watch --outDir dist-electron electron/index.ts",
+    "electron-ts-watch": "tsc --resolveJsonModule --watch --outDir dist-electron electron/index.ts --sourceMap",
     "electron-start": "electron .",
     "electron-dev-watch": "nodemon --watch ./dist-electron/*.js --exec 'electron .'",
     "start": "react-scripts start",
@@ -30,7 +30,7 @@
     "extends": null,
     "files": [
       "build/**/*",
-      "dist-electron/**/*",
+      "dist-electron/**/*.js",
       "node_modules/**/*"
     ],
     "dmg": {
