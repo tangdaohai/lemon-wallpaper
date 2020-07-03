@@ -1,20 +1,21 @@
+import { DataSource } from 'lemon-utils'
 export default {
-  biying: {
-    key: 'biying',
+  [DataSource.BING]: {
+    key: DataSource.BING,
     name: '必应搜索壁纸(CN)',
     searchUrl: 'https://cn.bing.com/HPImageArchive.aspx?format=js&idx=0&n=7&nc=1582381253445&pid=hp',
     canSearch: false,
     showDetail: true
   },
-  unsplash: {
-    key: 'unsplash',
+  [DataSource.UNSPLASH]: {
+    key: DataSource.UNSPLASH,
     name: 'unsplash',
     apiUrl: '',
     canSearch: true,
     showDetail: false
   },
-  wallhaven: {
-    key: 'wallhaven',
+  [DataSource.WALLHAVEN]: {
+    key: DataSource.WALLHAVEN,
     name: 'WallHaven',
     apiUrl: '',
     canSearch: true,

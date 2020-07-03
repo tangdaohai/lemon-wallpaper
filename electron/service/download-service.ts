@@ -1,4 +1,5 @@
 import { IncomingMessage } from 'http'
+import { DataSource } from 'lemon-utils'
 import { get as getConfig } from '../config'
 import { createWriteStream, promises as fsPromises } from 'fs'
 import { join } from 'path'
@@ -24,7 +25,7 @@ export default async function (type: string, url: string): Promise<DownLoadResul
   // 默认图片名称
   let imgName: string = 'default-' + Date.now() + '.jpg'
   switch (type) {
-    case 'biying':
+    case DataSource.BING:
       imgName = url.split(/^.*\//)[1]
   }
   const saveImgName = join(saveImgPath, imgName)

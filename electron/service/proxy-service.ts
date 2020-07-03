@@ -1,4 +1,5 @@
 /** 生成 URL */
+import { DataSource } from 'lemon-utils'
 import dataSourceUrl from '../data-source-url'
 import request from '../util/request'
 import wallHavenParse from '../util/wallhaven-parse'
@@ -9,19 +10,20 @@ function _buildUrl (type: string, params: any): string|Array<string> {
   const startNum = params.pageNum * params.rowsPerPage
   // 默认搜索条件是 natural
   const queryText = params.query || 'night sky'
+  const baseUrl = dataSourceUrl[type]
   switch (type) {
-    case 'biying':
+    case DataSource.BING:
       url = []
       for (let i = 0; i < params.rowsPerPage; i++) {
-        url.push(`${dataSourceUrl.biying}&d=${startNum + i}`)
+        url.push(`${baseUrl}&d=${startNum + i}`)
       }
       break
-    case 'unsplash':
+    case DataSource.UNSPLASH:
       // params.pageNum 前端中的第一页是 0，而 unsplash 的第一页是 1
-      url = `${dataSourceUrl.unsplash}/?page=${params.pageNum + 1}&per_page=${params.rowsPerPage}&query=${queryText}`
+      url = `${baseUrl}/?page=${params.pageNum + 1}&per_page=${params.rowsPerPage}&query=${queryText}`
       break
-    case 'wallhaven':
-      url = `${dataSourceUrl.wallhaven}?q=${queryText}&categories=${params.whParams.categories.join('')}&purity=${params.whParams.purity.join('')}0&page=${params.pageNum + 1}`
+    case DataSource.WALLHAVEN:
+      url = `${baseUrl}?q=${queryText}&categories=${params.whParams.categories.join('')}&purity=${params.whParams.purity.join('')}0&page=${params.pageNum + 1}`
       break
   }
   return url
@@ -39,12 +41,12 @@ export default async function (type: string, params: any) {
 
   // 转换数据格式
   switch (type) {
-    case 'biying':
+    case DataSource.BING:
       if (Array.isArray(result)) {
         result = result?.map(val => val.data).map(val => ({ time: val.enddate, url: val.url, downloadUrl: val.url, resolution: '1920 x 1080' })) || []
       }
       break
-    case 'unsplash':
+    case DataSource.UNSPLASH:
       result = (result as { results: Array<any> }).results!.map(val => {
         return {
           time: val.created_at,
@@ -54,7 +56,7 @@ export default async function (type: string, params: any) {
         }
       })
       break
-    case 'wallhaven':
+    case DataSource.WALLHAVEN:
       if (typeof result === 'string') {
         // 解析
         result = wallHavenParse(result)
