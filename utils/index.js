@@ -1,15 +1,12 @@
-const EventType = {
-  PROXY: 'proxy',
-  DOWNLOAD: 'download',
-  SET_DESKTOP: 'set-desktop'
-}
-
-const DataSource = {
-  BING: 'bingying',
-  UNSPLASH: 'unsplash',
-  WALLHAVEN: 'wallhaven'
-}
-module.exports = {
-  EventType,
-  DataSource
-}
+"use strict";
+exports.__esModule = true;
+exports.EventType = {
+    PROXY: 'proxy',
+    DOWNLOAD: 'download',
+    SET_DESKTOP: 'set-desktop'
+};
+exports.DataSource = {
+    BING: 'bing',
+    UNSPLASH: 'unsplash',
+    WALLHAVEN: 'wallhaven'
+};
