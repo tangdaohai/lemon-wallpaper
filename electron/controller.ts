@@ -53,19 +53,19 @@ server.use(EventType.SET_DESKTOP, async (ctx, data) => {
 })
 
 // 选择目录
-server.use('select-dir', async (ctx) => {
+server.use(EventType.SELECT_DIR, async (ctx) => {
   const result = await Directory.selectDir()
   ctx.reply(_success(result))
 })
 
 // 获取当前下载存放的目录
-server.use('get-download-path', async ctx => {
+server.use(EventType.GET_DOWNLOAD_PATH, async ctx => {
   const result = await Directory.getDownloadDir()
   ctx.reply(_success(result))
 })
 
 // 写入配置文件
-server.use('set-download-path', async (ctx, data) => {
+server.use(EventType.SET_DOWNLOAD_PATH, async (ctx, data) => {
   try {
     await Directory.setDownloadDir(data.path, data.oldPath)
     ctx.reply(_success())
@@ -78,7 +78,7 @@ server.use('set-download-path', async (ctx, data) => {
   }
 })
 // 获取本地图片
-server.use('get-local-img', async ctx => {
+server.use(EventType.GET_LOCAL_IMG, async ctx => {
   try {
     const result = await Local.getLocalList()
     ctx.reply(_success(result))
@@ -87,7 +87,7 @@ server.use('get-local-img', async ctx => {
   }
 })
 
-server.use('set-local-img-desktop', async (ctx, data) => {
+server.use(EventType.SET_LOCAL_IMG_DESKTOP, async (ctx, data) => {
   try {
     await wallpaper.set(data.url)
     ctx.reply(_format(data.url === await wallpaper.get()))
@@ -97,7 +97,7 @@ server.use('set-local-img-desktop', async (ctx, data) => {
   }
 })
 
-server.use('delete-local-img', async (ctx, data) => {
+server.use(EventType.DELETE_LOCAL_IMG, async (ctx, data) => {
   try {
     await Local.deleteLocalImg(data.path as string)
     ctx.reply(_success('删除成功。'))
