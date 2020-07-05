@@ -176,7 +176,7 @@ export default function ImageList (props: ImageListProps) {
 
   const deleteLocalImg = async () => {
     setLoading(true)
-    const result = await ipcRequest('delete-local-img', { path: deleteUrl })
+    const result = await ipcRequest(EventType.DELETE_LOCAL_IMG, { path: deleteUrl })
     setLoading(false)
     if (result.success) {
       switchPopover(null)

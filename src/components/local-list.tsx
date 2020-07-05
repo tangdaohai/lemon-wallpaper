@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { EventType } from 'lemon-utils'
 import request from 'electron-happy-ipc/request'
 import ImageList from './common/image-list'
 
@@ -31,7 +32,7 @@ export default function LocalList () {
   }
 
   const init = async () => {
-    const result = await request('get-local-img')
+    const result = await request(EventType.GET_LOCAL_IMG)
     if (result.success) {
       setList(result.content)
       setShowList(result.content.slice(0, rowsPerPage))

@@ -9,6 +9,7 @@ import {
   FormControlLabel,
   Checkbox
 } from '@material-ui/core'
+import { EventType } from 'lemon-utils'
 import Layout from './normal-layout'
 import ipcRequest from 'electron-happy-ipc/request'
 import { Color as AlertType } from '@material-ui/lab/Alert'
@@ -28,7 +29,7 @@ export default function Setting () {
   })
 
   useEffect(() => {
-    ipcRequest('get-download-path').then(result => {
+    ipcRequest(EventType.GET_DOWNLOAD_PATH).then(result => {
       if (result.success) {
         setCurrentPath(result.content)
       } else {
@@ -48,7 +49,7 @@ export default function Setting () {
 
   // 选择目录
   const selectDownloadDirHandle = async () => {
-    const result = await ipcRequest('select-dir')
+    const result = await ipcRequest(EventType.SELECT_DIR)
     if (!result.content.canceled) {
       setSelectPath(result.content.filePaths[0])
     }
@@ -56,7 +57,7 @@ export default function Setting () {
 
   // 保存当前选择的目录
   const saveDownloadPathHandle = async () => {
-    const result = await ipcRequest('set-download-path', {
+    const result = await ipcRequest(EventType.SET_DOWNLOAD_PATH, {
       path: selectPath,
       oldPath: moveAll ? currentPath : ''
     })
