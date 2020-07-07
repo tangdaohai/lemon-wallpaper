@@ -9,6 +9,7 @@ interface Props {
 
 export default function GlobalContextProvide (props: Props) {
   const [searchContent, changeSearchContent] = useState('')
+  const [themeType, setThemeType] = useState<'dark' | 'light'>('light')
   // 默认搜索必应壁纸
   const [dataSource, changeDataSource] = useState<keyof typeof dataSourceConfig>(DataSource.BING)
   const [whParams, changeWhParams] = useState({
@@ -17,7 +18,7 @@ export default function GlobalContextProvide (props: Props) {
   })
 
   return (
-    <GlobalContext.Provider value={{ searchContent, changeSearchContent, dataSource, changeDataSource, whParams, changeWhParams }}>
+    <GlobalContext.Provider value={{ themeType, setThemeType, searchContent, changeSearchContent, dataSource, changeDataSource, whParams, changeWhParams }}>
       {props.children}
     </GlobalContext.Provider>
   )

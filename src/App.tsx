@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import clsx from 'clsx'
-import { ThemeProvider, makeStyles, Theme, createStyles, useTheme } from '@material-ui/core/styles'
-import createCustomTheme from './theme'
+import { makeStyles, Theme, createStyles, useTheme } from '@material-ui/core/styles'
+import LemonTheme from './theme'
 import {
   Drawer,
   CssBaseline,
@@ -92,10 +92,6 @@ const useStyles = makeStyles((theme: Theme) =>
 )
 
 export default function App () {
-  // 获取系统主题模式（moc下的深色与浅色，默认为 dark）
-  // const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)')
-  // 自定义主题
-  const customTheme = createCustomTheme(true)
   const classes = useStyles()
   const theme = useTheme()
   const [open, setOpen] = useState(false)
@@ -125,10 +121,10 @@ export default function App () {
 
   return (
     <div className={classes.root}>
-      <ThemeProvider theme={customTheme}>
-        <GlobalContextProvide>
+      <GlobalContextProvide>
+        <LemonTheme>
           <CssBaseline />
-          <Header drawerOpen={open} setDrawerOpen={setOpen} themeType={customTheme.palette.type} />
+          <Header drawerOpen={open} setDrawerOpen={setOpen} />
           <Drawer
             className={classes.drawer}
             variant='persistent'
@@ -168,8 +164,8 @@ export default function App () {
             <div className={classes.drawerHeader} />
             {childrenSwitch()}
           </main>
-        </GlobalContextProvide>
-      </ThemeProvider>
+        </LemonTheme>
+      </GlobalContextProvide>
     </div>
   )
 }

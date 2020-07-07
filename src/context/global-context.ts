@@ -6,6 +6,8 @@ interface WhParams {
   purity: Array<number>,
 }
 interface GlobalContext {
+  themeType: 'dark' | 'light',
+  setThemeType: (val: 'dark' | 'light') => void,
   searchContent: string,
   changeSearchContent: (val: string) => void,
   dataSource: keyof typeof dataSourceConfig,
@@ -15,6 +17,8 @@ interface GlobalContext {
 }
 
 const defaultContext: GlobalContext = {
+  themeType: 'light',
+  setThemeType: (val) => {},
   searchContent: '',
   changeSearchContent: (val: string) => {},
   dataSource: 'unsplash',
