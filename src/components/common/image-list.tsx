@@ -51,6 +51,9 @@ const useStyles = makeStyles((theme: Theme) =>
       top: '64px',
       left: 0
     },
+    delBtn: {
+      color: theme.palette.error.main
+    },
     noData: {
       lineHeight: '60px',
       marginTop: '8px'
@@ -228,7 +231,7 @@ export default function ImageList (props: ImageListProps) {
           }
           {
             props.isLocal &&
-              <Button color='secondary' aria-label='删除' onClick={event => switchPopover(event, val.downloadUrl)}>
+              <Button className={classes.delBtn} aria-label='删除' onClick={event => switchPopover(event, val.downloadUrl)}>
                 <DeleteIcon /> 删除
               </Button>
           }
