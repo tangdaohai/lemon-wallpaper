@@ -7,9 +7,11 @@ interface Props {
   children: React.ReactElement | Array<React.ReactElement>
 }
 
+const cacheThemeType = (window.localStorage.getItem('themeType') || 'light') as 'light' | 'dark'
+
 export default function GlobalContextProvide (props: Props) {
   const [searchContent, changeSearchContent] = useState('')
-  const [themeType, setThemeType] = useState<'dark' | 'light'>('light')
+  const [themeType, setThemeType] = useState<'dark' | 'light'>(cacheThemeType)
   // 默认搜索必应壁纸
   const [dataSource, changeDataSource] = useState<keyof typeof dataSourceConfig>(DataSource.BING)
   const [whParams, changeWhParams] = useState({

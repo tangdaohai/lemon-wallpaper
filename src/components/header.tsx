@@ -13,7 +13,8 @@ import {
   Checkbox,
   FormControlLabel
 } from '@material-ui/core'
-import { makeStyles, createStyles, Theme, fade } from '@material-ui/core/styles'
+import { grey, lightBlue } from '@material-ui/core/colors'
+import { ThemeProvider, createMuiTheme, makeStyles, createStyles, Theme, fade } from '@material-ui/core/styles'
 import MenuIcon from '@material-ui/icons/Menu'
 import SearchIcon from '@material-ui/icons/Search'
 import GitHubIcon from '@material-ui/icons/GitHub'
@@ -27,6 +28,17 @@ const { shell } = window.require('electron')
 const drawerWidth = 240
 const CategoriesLabel = ['一般', '动漫', '人物']
 const PurityLabel = ['SFW', 'Sketchy']
+const headerTheme = createMuiTheme({
+  palette: {
+    type: 'dark',
+    primary: {
+      main: grey[900]
+    },
+    secondary: {
+      main: lightBlue.A400
+    }
+  }
+})
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     appBar: {
@@ -104,12 +116,19 @@ const useStyles = makeStyles((theme: Theme) =>
 )
 interface HeaderProps {
   drawerOpen: boolean,
-  setDrawerOpen: (value: React.SetStateAction<boolean>) => void,
-  themeType: 'light' | 'dark'
+  setDrawerOpen: (value: React.SetStateAction<boolean>) => void
 }
 export default function Header (props: HeaderProps) {
   // context 数据
-  const { changeSearchContent, dataSource, changeDataSource, whParams, changeWhParams } = useContext(GlobalContext)
+  const {
+    themeType,
+    setThemeType,
+    changeSearchContent,
+    dataSource,
+    changeDataSource,
+    whParams,
+    changeWhParams
+  } = useContext(GlobalContext)
   const classes = useStyles()
 
   const [searchParam, setSearchParam] = useState<string>('')
@@ -164,29 +183,36 @@ export default function Header (props: HeaderProps) {
     })
   }
 
+  const themeTypeChangeHandle = () => {
+    const type = themeType === 'light' ? 'dark' : 'light'
+    setThemeType(type)
+    window.localStorage.setItem('themeType', type)
+  }
+
   return (
-    <AppBar
-      position='fixed'
-      className={clsx(classes.appBar, {
-        [classes.appBarShift]: props.drawerOpen
-      })}
-    >
-      <Toolbar>
-        <IconButton
-          color='inherit'
-          onClick={handleDrawerOpen}
-          edge='start'
-          className={clsx(classes.menuButton, props.drawerOpen && classes.hide)}
-        >
-          <MenuIcon />
-        </IconButton>
-        <Typography className={classes.title} variant='h6' noWrap>
-          Lemon Wallpaper
-        </Typography>
-        <Select value={dataSource} onChange={dataSourceSelect}>
-          {Object.values(dataSourceConfig).map(val => <MenuItem key={val.key} value={val.key}>{val.name}</MenuItem>)}
-        </Select>
-        {
+    <ThemeProvider theme={headerTheme}>
+      <AppBar
+        position='fixed'
+        className={clsx(classes.appBar, {
+          [classes.appBarShift]: props.drawerOpen
+        })}
+      >
+        <Toolbar>
+          <IconButton
+            color='inherit'
+            onClick={handleDrawerOpen}
+            edge='start'
+            className={clsx(classes.menuButton, props.drawerOpen && classes.hide)}
+          >
+            <MenuIcon />
+          </IconButton>
+          <Typography className={classes.title} variant='h6' noWrap>
+            Lemon Wallpaper
+          </Typography>
+          <Select value={dataSource} onChange={dataSourceSelect}>
+            {Object.values(dataSourceConfig).map(val => <MenuItem key={val.key} value={val.key}>{val.name}</MenuItem>)}
+          </Select>
+          {
               dataSourceConfig[dataSource]!.canSearch &&
                 <Paper component='form' onSubmit={submit} className={classes.search}>
                   <InputBase
@@ -202,59 +228,60 @@ export default function Header (props: HeaderProps) {
                     <SearchIcon />
                   </div>
                 </Paper>
-        }
-        {
-          dataSource === 'wallhaven' && whCategories.map((val, index) => {
-            return (
-              <FormControlLabel
-                key={index}
-                control={
-                  <Checkbox
-                    size='small'
-                    checked={!!val}
-                    onChange={_ => whCategoriesChangeHandle(index)}
-                  />
-                }
-                label={CategoriesLabel[index]}
-              />
-            )
-          })
-        }
-        {
-          dataSource === 'wallhaven' &&
-            <Tooltip title='WallHaven 图片源对尺度进行了分类。SFW意为可以在工作场合展示，Sketchy则不太适合。'>
-              <div>
-                {
-                  whPurity.map((val, index) => {
-                    return (
-                      <FormControlLabel
-                        key={index}
-                        control={
-                          <Checkbox
-                            size='small'
-                            checked={!!val}
-                            onChange={_ => whPurityChangeHandle(index)}
-                          />
-                        }
-                        label={PurityLabel[index]}
-                      />
-                    )
-                  })
-                }
-              </div>
-            </Tooltip>
-        }
-        <Tooltip title='访问 Github'>
-          <IconButton onClick={() => { shell.openExternal('https://github.com/tangdaohai/lemon-wallpaper') }}>
-            <GitHubIcon />
-          </IconButton>
-        </Tooltip>
-        <Tooltip title='切换深色/浅色主题'>
-          <IconButton>
-            {props.themeType === 'light' ? <Brightness4Icon /> : <Brightness7Icon />}
-          </IconButton>
-        </Tooltip>
-      </Toolbar>
-    </AppBar>
+          }
+          {
+            dataSource === 'wallhaven' && whCategories.map((val, index) => {
+              return (
+                <FormControlLabel
+                  key={index}
+                  control={
+                    <Checkbox
+                      size='small'
+                      checked={!!val}
+                      onChange={_ => whCategoriesChangeHandle(index)}
+                    />
+                  }
+                  label={CategoriesLabel[index]}
+                />
+              )
+            })
+          }
+          {
+            dataSource === 'wallhaven' &&
+              <Tooltip title='WallHaven 图片源对尺度进行了分类。SFW意为可以在工作场合展示，Sketchy则不太适合。'>
+                <div>
+                  {
+                    whPurity.map((val, index) => {
+                      return (
+                        <FormControlLabel
+                          key={index}
+                          control={
+                            <Checkbox
+                              size='small'
+                              checked={!!val}
+                              onChange={_ => whPurityChangeHandle(index)}
+                            />
+                          }
+                          label={PurityLabel[index]}
+                        />
+                      )
+                    })
+                  }
+                </div>
+              </Tooltip>
+          }
+          <Tooltip title='访问 Github'>
+            <IconButton onClick={() => { shell.openExternal('https://github.com/tangdaohai/lemon-wallpaper') }}>
+              <GitHubIcon />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title={`切换${themeType === 'light' ? '深色' : '浅色'}主题`}>
+            <IconButton onClick={themeTypeChangeHandle}>
+              {themeType === 'light' ? <Brightness4Icon /> : <Brightness7Icon />}
+            </IconButton>
+          </Tooltip>
+        </Toolbar>
+      </AppBar>
+    </ThemeProvider>
   )
 }
