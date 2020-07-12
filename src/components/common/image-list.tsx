@@ -92,7 +92,7 @@ const scrollTop = (doc: HTMLHtmlElement, step: number = 20) => {
 let deleteUrl = ''
 
 export default function ImageList (props: ImageListProps) {
-  const { dataSource } = useContext(GlobalContext)
+  const { search: { dataSource } } = useContext(GlobalContext)
   const [loading, setLoading] = useState(false)
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null)
   const [message, setMessage] = useState<ShowMessageProps>({

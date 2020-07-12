@@ -17,7 +17,8 @@ const useStyles = makeStyles((theme: Theme) => {
 })
 
 export default function Search () {
-  const { searchContent, dataSource, whParams } = useContext(GlobalContext)
+  const { search } = useContext(GlobalContext)
+  const { searchContent, dataSource, whParams } = search
   const [loading, setLoading] = useState(false)
   const [list, setList] = useState([])
   // 页码

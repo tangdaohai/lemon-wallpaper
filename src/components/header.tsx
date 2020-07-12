@@ -123,20 +123,17 @@ export default function Header (props: HeaderProps) {
   const {
     themeType,
     setThemeType,
-    changeSearchContent,
-    dataSource,
-    changeDataSource,
-    whParams,
-    changeWhParams
+    search,
+    searchDispatch
   } = useContext(GlobalContext)
   const classes = useStyles()
 
+  const { dataSource, whParams } = search
+
   const [searchParam, setSearchParam] = useState<string>('')
   // wall haven 壁纸分类选项
-  // const [whCategories, setWhCategories] = useState([1, 1, 1])
-  // 壁纸尺度，SFW 适合出现在工作场合，Sketchy 不太适合
-  // const [whPurity, setWhPurity] = useState([1, 1])
   const whCategories = whParams.categories
+  // 壁纸尺度，SFW 适合出现在工作场合，Sketchy 不太适合
   const whPurity = whParams.purity
 
   // header 上的打开菜单事件
@@ -146,7 +143,10 @@ export default function Header (props: HeaderProps) {
 
   // 数据源选择事件
   const dataSourceSelect = (event: ChangeEvent<{ value: unknown }>) => {
-    changeDataSource(event.target.value as keyof typeof dataSourceConfig)
+    searchDispatch({
+      type: 'dataSource',
+      value: event.target.value as string
+    })
   }
 
   // 搜索框的 input 事件监听
@@ -160,26 +160,33 @@ export default function Header (props: HeaderProps) {
     event.preventDefault()
     event.stopPropagation()
     // 传递搜索内容
-    changeSearchContent(encodeURIComponent(searchParam))
+    searchDispatch({
+      type: 'searchContent',
+      value: encodeURIComponent(searchParam)
+    })
   }
 
   // wall haven 壁纸分类选项 change
   const whCategoriesChangeHandle = (index: number) => {
-    const arr = [...whCategories]
+    const arr = [...whCategories!]
     arr[index] = (arr[index] + 1) % 2
-    // setWhCategories(arr)
-    changeWhParams({
-      categories: arr,
-      purity: whPurity
+    searchDispatch({
+      type: 'whParams',
+      value: {
+        categories: arr,
+        purity: whPurity
+      }
     })
   }
   const whPurityChangeHandle = (index: number) => {
-    const arr = [...whPurity]
+    const arr = [...whPurity!]
     arr[index] = (arr[index] + 1) % 2
-    // setWhPurity(arr)
-    changeWhParams({
-      categories: whCategories,
-      purity: arr
+    searchDispatch({
+      type: 'whParams',
+      value: {
+        categories: whCategories,
+        purity: arr
+      }
     })
   }
 
@@ -230,7 +237,7 @@ export default function Header (props: HeaderProps) {
                 </Paper>
           }
           {
-            dataSource === 'wallhaven' && whCategories.map((val, index) => {
+            dataSource === 'wallhaven' && whCategories!.map((val, index) => {
               return (
                 <FormControlLabel
                   key={index}
@@ -251,7 +258,7 @@ export default function Header (props: HeaderProps) {
               <Tooltip title='WallHaven 图片源对尺度进行了分类。SFW意为可以在工作场合展示，Sketchy则不太适合。'>
                 <div>
                   {
-                    whPurity.map((val, index) => {
+                    whPurity!.map((val, index) => {
                       return (
                         <FormControlLabel
                           key={index}
