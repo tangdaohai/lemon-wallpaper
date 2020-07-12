@@ -1,6 +1,6 @@
 import React, { useState, useReducer } from 'react'
 import { DataSource } from 'lemon-utils'
-import GlobalContext, { ThemeType, DataSourceType, Search, SearchDispatchAction } from './global-context'
+import GlobalContext, { ThemeType, Search, SearchDispatchAction } from './global-context'
 
 interface Props {
   children: React.ReactElement | Array<React.ReactElement>
@@ -18,26 +18,14 @@ const defaultSearchValue: Search = {
 }
 
 const reducer = (prevState: Search, action: SearchDispatchAction): Search => {
-  switch (action.type) {
-    case 'searchContent':
-      return { ...prevState, searchContent: action.value as string }
-    default:
-      return defaultSearchValue
-  }
+  return { ...prevState, [action.type]: action.value }
 }
 export default function GlobalContextProvide (props: Props) {
   const [search, searchDispatch] = useReducer(reducer, defaultSearchValue)
-  const [searchContent, changeSearchContent] = useState('')
   const [themeType, setThemeType] = useState<ThemeType>(cacheThemeType)
-  // 默认搜索必应壁纸
-  const [dataSource, changeDataSource] = useState<DataSourceType>(DataSource.BING)
-  const [whParams, changeWhParams] = useState({
-    categories: [1, 1, 1],
-    purity: [1, 1]
-  })
 
   return (
-    <GlobalContext.Provider value={{ search, searchDispatch, themeType, setThemeType, searchContent, changeSearchContent, dataSource, changeDataSource, whParams, changeWhParams }}>
+    <GlobalContext.Provider value={{ search, searchDispatch, themeType, setThemeType }}>
       {props.children}
     </GlobalContext.Provider>
   )
