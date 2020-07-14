@@ -116,6 +116,7 @@ const useStyles = makeStyles((theme: Theme) =>
 )
 interface HeaderProps {
   drawerOpen: boolean,
+  isSearch: boolean,
   setDrawerOpen: (value: React.SetStateAction<boolean>) => void
 }
 export default function Header (props: HeaderProps) {
@@ -216,28 +217,31 @@ export default function Header (props: HeaderProps) {
           <Typography className={classes.title} variant='h6' noWrap>
             Lemon Wallpaper
           </Typography>
-          <Select value={dataSource} onChange={dataSourceSelect}>
-            {Object.values(dataSourceConfig).map(val => <MenuItem key={val.key} value={val.key}>{val.name}</MenuItem>)}
-          </Select>
           {
-              dataSourceConfig[dataSource]!.canSearch &&
-                <Paper component='form' onSubmit={submit} className={classes.search}>
-                  <InputBase
-                    placeholder='enter for search'
-                    onChange={searchChange}
-                    classes={{
-                      root: classes.inputRoot,
-                      input: classes.inputInput
-                    }}
-                    inputProps={{ 'aria-label': 'search' }}
-                  />
-                  <div className={classes.searchIcon}>
-                    <SearchIcon />
-                  </div>
-                </Paper>
+            props.isSearch &&
+              <Select value={dataSource} onChange={dataSourceSelect}>
+                {Object.values(dataSourceConfig).map(val => <MenuItem key={val.key} value={val.key}>{val.name}</MenuItem>)}
+              </Select>
           }
           {
-            dataSource === 'wallhaven' && whCategories!.map((val, index) => {
+            props.isSearch && dataSourceConfig[dataSource]!.canSearch &&
+              <Paper component='form' onSubmit={submit} className={classes.search}>
+                <InputBase
+                  placeholder='enter for search'
+                  onChange={searchChange}
+                  classes={{
+                    root: classes.inputRoot,
+                    input: classes.inputInput
+                  }}
+                  inputProps={{ 'aria-label': 'search' }}
+                />
+                <div className={classes.searchIcon}>
+                  <SearchIcon />
+                </div>
+              </Paper>
+          }
+          {
+            props.isSearch && dataSource === 'wallhaven' && whCategories!.map((val, index) => {
               return (
                 <FormControlLabel
                   key={index}
@@ -254,7 +258,7 @@ export default function Header (props: HeaderProps) {
             })
           }
           {
-            dataSource === 'wallhaven' &&
+            props.isSearch && dataSource === 'wallhaven' &&
               <Tooltip title='WallHaven 图片源对尺度进行了分类。SFW意为可以在工作场合展示，Sketchy则不太适合。'>
                 <div>
                   {

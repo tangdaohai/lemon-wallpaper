@@ -124,7 +124,7 @@ export default function App () {
       <GlobalContextProvide>
         <LemonTheme>
           <CssBaseline />
-          <Header drawerOpen={open} setDrawerOpen={setOpen} />
+          <Header drawerOpen={open} setDrawerOpen={setOpen} isSearch={activeItem === 'search'} />
           <Drawer
             className={classes.drawer}
             variant='persistent'
