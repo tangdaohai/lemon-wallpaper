@@ -10,6 +10,20 @@ interface LocalImag {
   size: string,
   mtime: number
 }
+const sizeUnit = ['B', 'KB', 'MB', 'GB']
+/**
+ * 存储单位大小转换。eg：1024B =》 1KB
+ * @param size 单位为 B
+ */
+function formatSize (size: number): string {
+  let temp: number = size
+  let index: number = 0
+  while (temp > 1024) {
+    temp /= 1024
+    index++
+  }
+  return (Number.isInteger(temp) ? temp : temp.toFixed(2)) + sizeUnit[index]
+}
 
 export async function getLocalList () {
   const result: Array<LocalImag> = []
@@ -24,7 +38,7 @@ export async function getLocalList () {
         url: 'file://' + imgPath,
         downloadUrl: imgPath,
         time: new Date(stat.mtimeMs).toLocaleString(),
-        size: stat.size / 1024 + 'KB',
+        size: formatSize(stat.size),
         mtime: stat.mtimeMs
       })
     }
