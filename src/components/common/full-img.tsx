@@ -21,9 +21,22 @@ export interface FullImgProps {
 export default function FullImg (props: FullImgProps) {
   const classes = useStyles()
   const [open, setOpen] = useState(false)
+  const [imgUrl, setImgUrl] = useState('')
   useEffect(() => {
+    loadImg()
     props.url && setOpen(true)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.url])
+
+  function loadImg () {
+    setImgUrl('')
+    const img = new Image()
+    img.onload = () => {
+      setImgUrl(props.url)
+    }
+    img.src = props.url
+  }
+
   return (
     <Dialog open={open} fullScreen>
       <Box display='flex' height='100%' m={2}>
@@ -54,8 +67,8 @@ export default function FullImg (props: FullImgProps) {
           <Box flexGrow={1}>
             <Card className={classes.card} raised>
               {
-                props.url &&
-                  <CardMedia className={classes.cardMedia} image={props.url} />
+                imgUrl &&
+                  <CardMedia className={classes.cardMedia} image={imgUrl} />
               }
             </Card>
           </Box>
