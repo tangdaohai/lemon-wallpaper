@@ -20,6 +20,7 @@ import { ArrowDownward, Delete as DeleteIcon } from '@material-ui/icons'
 import GlobalContext from '../../context/global-context'
 import ipcRequest from 'electron-happy-ipc/request'
 import ShowMessage, { ShowMessageProps } from './show-message'
+import FullImg, { FullImgProps } from './full-img'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -98,6 +99,10 @@ export default function ImageList (props: ImageListProps) {
   const [message, setMessage] = useState<ShowMessageProps>({
     content: '',
     open: false
+  })
+
+  const [fullImgProps, setFullImgProps] = useState<FullImgProps>({
+    url: ''
   })
 
   // 页码
@@ -207,13 +212,20 @@ export default function ImageList (props: ImageListProps) {
     })
   }
 
+  const imgClickHandle = (imgUrl: string) => {
+    setFullImgProps({
+      ...fullImgProps,
+      url: (props.isLocal ? 'file://' : '') + imgUrl
+    })
+  }
+
   const classes = useStyles()
 
   // 图片布局列表
   const imgGrids = list && list.map((val: any, index) => (
     <Grid key={index} item xl={3} lg={4} md={6} sm={12}>
       <Card className={classes.card} raised>
-        <CardActionArea>
+        <CardActionArea onClick={() => { imgClickHandle(val.downloadUrl) }}>
           <CardMedia className={classes.cardMedia} image={val.url} title='Lemon wallpaper' />
         </CardActionArea>
         <CardContent>
@@ -278,6 +290,7 @@ export default function ImageList (props: ImageListProps) {
 
   return (
     <div className={classes.root}>
+      <FullImg {...fullImgProps} />
       <div className={classes.fixed}>
         {props.isLocal && popoverCard}
         <LinearProgress className={classes.linearProgress} style={{ display: loading ? '' : 'none' }} />
