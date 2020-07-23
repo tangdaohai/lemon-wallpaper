@@ -9,6 +9,7 @@ import {
   Backdrop,
   CircularProgress
 } from '@material-ui/core'
+import { ArrowBack, ArrowForward } from '@material-ui/icons'
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
 const useStyles = makeStyles((theme: Theme) => {
   return createStyles({
@@ -30,7 +31,10 @@ const useStyles = makeStyles((theme: Theme) => {
   })
 })
 export interface FullImgProps {
-  url: string
+  listLength: number,
+  index: number,
+  url: string,
+  onSwitchImage?: (index: number) => void
 }
 export default function FullImg (props: FullImgProps) {
   const classes = useStyles()
@@ -43,7 +47,7 @@ export default function FullImg (props: FullImgProps) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.url])
 
-  function loadImg () {
+  const loadImg = () => {
     setImgUrl('')
     setLoading(true)
     const img = new Image()
@@ -52,6 +56,12 @@ export default function FullImg (props: FullImgProps) {
       setLoading(false)
     }
     img.src = props.url
+  }
+
+  const switchImg = (index: number) => {
+    if (props.onSwitchImage) {
+      props.onSwitchImage(index)
+    }
   }
 
   return (
@@ -68,8 +78,20 @@ export default function FullImg (props: FullImgProps) {
         >
           <Card className={classes.card} raised>
             <CardActions>
-              <Button>下载</Button>
-              <Button>设置桌面</Button>
+              <Button
+                disabled={props.index <= 0}
+                startIcon={<ArrowBack />}
+                onClick={() => switchImg(props.index - 1)}
+              >
+                上一张
+              </Button>
+              <Button
+                disabled={props.index >= props.listLength - 1}
+                endIcon={<ArrowForward />}
+                onClick={() => switchImg(props.index + 1)}
+              >
+                下一张
+              </Button>
             </CardActions>
           </Card>
           <br />

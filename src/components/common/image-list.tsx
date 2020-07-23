@@ -102,7 +102,9 @@ export default function ImageList (props: ImageListProps) {
   })
 
   const [fullImgProps, setFullImgProps] = useState<FullImgProps>({
-    url: ''
+    listLength: 0,
+    url: '',
+    index: 0
   })
 
   // 页码
@@ -212,10 +214,20 @@ export default function ImageList (props: ImageListProps) {
     })
   }
 
-  const imgClickHandle = (imgUrl: string) => {
+  const imgClickHandle = (imgUrl: string, index: number) => {
     setFullImgProps({
-      ...fullImgProps,
+      listLength: list.length,
+      index,
       url: (props.isLocal ? 'file://' : '') + imgUrl
+    })
+  }
+
+  const switchImageHandle = (index: number) => {
+    const url = list[index].downloadUrl as string
+    setFullImgProps({
+      listLength: list.length,
+      index,
+      url: (props.isLocal ? 'file://' : '') + url
     })
   }
 
@@ -225,7 +237,7 @@ export default function ImageList (props: ImageListProps) {
   const imgGrids = list && list.map((val: any, index) => (
     <Grid key={index} item xl={3} lg={4} md={6} sm={12}>
       <Card className={classes.card} raised>
-        <CardActionArea onClick={() => { imgClickHandle(val.downloadUrl) }}>
+        <CardActionArea onClick={() => { imgClickHandle(val.downloadUrl, index) }}>
           <CardMedia className={classes.cardMedia} image={val.url} title='Lemon wallpaper' />
         </CardActionArea>
         <CardContent>
@@ -290,7 +302,7 @@ export default function ImageList (props: ImageListProps) {
 
   return (
     <div className={classes.root}>
-      <FullImg {...fullImgProps} />
+      <FullImg {...fullImgProps} onSwitchImage={switchImageHandle} />
       <div className={classes.fixed}>
         {props.isLocal && popoverCard}
         <LinearProgress className={classes.linearProgress} style={{ display: loading ? '' : 'none' }} />
