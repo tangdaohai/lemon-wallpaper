@@ -34,7 +34,9 @@ export interface FullImgProps {
   listLength: number,
   index: number,
   url: string,
-  onSwitchImage?: (index: number) => void
+  onSwitchImage?: (index: number) => void,
+  onDownload?: (url: string) => void,
+  onSetDesktop?: (url: string) => void,
 }
 export default function FullImg (props: FullImgProps) {
   const classes = useStyles()
@@ -77,6 +79,14 @@ export default function FullImg (props: FullImgProps) {
           flexDirection='column'
         >
           <Card className={classes.card} raised>
+            <CardActions>
+              <Button onClick={() => props.onDownload && props.onDownload(imgUrl)}>
+                下载
+              </Button>
+              <Button onClick={() => props.onSetDesktop && props.onSetDesktop(imgUrl)}>
+                设置桌面
+              </Button>
+            </CardActions>
             <CardActions>
               <Button
                 disabled={props.index <= 0}
