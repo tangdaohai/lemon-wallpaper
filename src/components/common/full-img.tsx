@@ -52,8 +52,9 @@ export default function FullImg (props: FullImgProps) {
   const loadImg = () => {
     setImgUrl('')
     setLoading(true)
-    const img = new Image()
+    let img: HTMLImageElement | null = new Image()
     img.onload = () => {
+      img = null
       setImgUrl(props.url)
       setLoading(false)
     }
