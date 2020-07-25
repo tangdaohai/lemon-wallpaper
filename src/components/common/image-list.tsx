@@ -302,7 +302,12 @@ export default function ImageList (props: ImageListProps) {
 
   return (
     <div className={classes.root}>
-      <FullImg {...fullImgProps} onSwitchImage={switchImageHandle} />
+      <FullImg
+        {...fullImgProps}
+        onSwitchImage={switchImageHandle}
+        onDownload={downLoadImg}
+        onSetDesktop={setDesktopHandle}
+      />
       <div className={classes.fixed}>
         {props.isLocal && popoverCard}
         <LinearProgress className={classes.linearProgress} style={{ display: loading ? '' : 'none' }} />
