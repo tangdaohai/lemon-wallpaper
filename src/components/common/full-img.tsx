@@ -7,9 +7,10 @@ import {
   CardActions,
   Button,
   Backdrop,
-  CircularProgress
+  CircularProgress,
+  Fab
 } from '@material-ui/core'
-import { ArrowBack, ArrowForward } from '@material-ui/icons'
+import { ArrowBack, ArrowForward, Close } from '@material-ui/icons'
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
 const useStyles = makeStyles((theme: Theme) => {
   return createStyles({
@@ -27,6 +28,17 @@ const useStyles = makeStyles((theme: Theme) => {
       position: 'absolute',
       zIndex: theme.zIndex.drawer + 1,
       color: '#fff'
+    },
+    fab: {
+      position: 'absolute',
+      bottom: theme.spacing(2),
+      right: theme.spacing(2),
+      '& svg': {
+        transition: 'transform .2s',
+        '&:hover': {
+          transform: 'rotate(180deg)'
+        }
+      }
     }
   })
 })
@@ -78,6 +90,7 @@ export default function FullImg (props: FullImgProps) {
           justifyContent='center'
           alignItems='center'
           flexDirection='column'
+          position='relative'
         >
           <Card className={classes.card} raised>
             <CardActions>
@@ -106,11 +119,13 @@ export default function FullImg (props: FullImgProps) {
             </CardActions>
           </Card>
           <br />
-          <Card className={classes.card} raised>
-            <CardActions>
-              <Button onClick={() => setOpen(false)}>关闭</Button>
-            </CardActions>
-          </Card>
+          <Fab
+            size='small'
+            className={classes.fab}
+            onClick={() => setOpen(false)}
+          >
+            <Close />
+          </Fab>
         </Box>
         {/* 图片展示区域 */}
         <Box flexGrow={1} display='flex' justifyContent='center' alignItems='center' position='relative'>
