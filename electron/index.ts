@@ -1,8 +1,11 @@
 import { app, BrowserWindow } from 'electron'
 import { join } from 'path'
+import Logger from 'electron-log'
 import loadConfig from './service/load-config'
 // ipc 请求控制器
 import './controller'
+// 覆盖 console 的打印方法
+Object.assign(console, Logger.functions)
 
 // 运行环境
 const isDev = () => {
