@@ -3784,6 +3784,10 @@ electron-happy-ipc@^1.0.0-beta:
   version "1.0.0-beta"
   resolved "https://registry.npmjs.org/electron-happy-ipc/-/electron-happy-ipc-1.0.0-beta.tgz#34c01aabbb22d1dd17931e6fd1f2fc723f027efa"
 
+electron-log@^4.2.2:
+  version "4.2.2"
+  resolved "https://registry.npm.taobao.org/electron-log/download/electron-log-4.2.2.tgz#b358dc6d1e4772465609ee3d8ad9f594d9e742c8"
+
 electron-publish@22.6.0:
   version "22.6.0"
   resolved "https://registry.yarnpkg.com/electron-publish/-/electron-publish-22.6.0.tgz#11dca595cfe3c0fdbc364c28dbb8838a1c6ec799"
